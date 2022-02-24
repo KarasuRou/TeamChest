@@ -1,0 +1,20 @@
+name: TeamChest
+version: 1.0.0
+main: karasurou.teamchest.TEST
+author: Rouven Tjalf Rosploch (KarasuRou)
+description: des
+api-version: 1.18
+commands:
+  com:
+    description: des
+    usage: /com [bla]
+    permission: teamchest.com
+    permission-message: You don't have permission to ...
+permissions:
+  teamchest.*:
+    description: des
+    children:
+      teamchest.com: true
+  teamchest.com:
+    description: des
+    default: op
