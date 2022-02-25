@@ -19,6 +19,6 @@ sing-items: # item that can define a team chest
   - 'WARPED_WALL_SIGN'
   - 'CRIMSON_WALL_SIGN'
 
-team-items: # what can be a teamchest
+team-items: # what can be a chest of a team
   - 'CHEST'
   - 'TRAPPED_CHEST'
