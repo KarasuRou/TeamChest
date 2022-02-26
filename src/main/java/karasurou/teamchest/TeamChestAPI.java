@@ -1,6 +1,7 @@
 package karasurou.teamchest;
 
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 public class TeamChestAPI {
 
@@ -30,5 +31,21 @@ public class TeamChestAPI {
             default:
                 return false;
         }
+    }
+
+    public static boolean createNewTeam(String teamName, Player owner) {
+        return false;
+    }
+
+    public static boolean addPlayerToTeam(String teamName, Player player) {
+        return false;
+    }
+
+    public static boolean removePlayerFromTeam(String teamName, Player player) {
+        return false;
+    }
+
+    public static boolean deleteTeam(String teamName, Player player) {
+        return false;
     }
 }
