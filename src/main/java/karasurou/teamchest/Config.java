@@ -76,7 +76,11 @@ public class Config {
         String[] files = {"language.yml", "language_de.yml"};
         for (String filename : files){
             File file = new File(plugin.getDataFolder(), filename);
-            if (!file.exists()){
+            if (file.exists()) {
+                if (file.delete()) {
+                    plugin.saveResource(filename, false);
+                }
+            } else {
                 plugin.saveResource(filename, false);
             }
         }
