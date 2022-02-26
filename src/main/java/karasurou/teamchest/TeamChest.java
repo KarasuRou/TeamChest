@@ -25,9 +25,8 @@ public class TeamChest extends JavaPlugin {
         Config.loadConfig(this);
     }
 
-    @Override
-    public void onDisable() {// TODO: 25.02.2022  
-        Config.unloadConfig();
+    public static Plugin getPlugin(){
+        return plugin;
     }
 
     @Override
