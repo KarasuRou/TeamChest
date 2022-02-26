@@ -1,5 +1,5 @@
-language-file: language.yml       # EN language
-language-file-de: language_de.yml # DE language
+language-file: 'language.yml'       # EN language
+language-file-de: 'language_de.yml' # DE language
 
 team-sign-line: # definition first sign line
   - '[Team-Sign]'
