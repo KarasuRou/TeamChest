@@ -1,0 +1,24 @@
+language-file: 'language.yml'       # EN language
+language-file-de: 'language_de.yml' # DE language
+
+team-sign-line: # definition first sign line
+  - '[Team-Sign]'
+  - '[team-sign]'
+  - '[Team Sign]'
+  - '[team sign]'
+  - '[Team_Sign]'
+  - '[team_sign]'
+
+sing-items: # item that can define a team chest
+  - 'SPRUCE_WALL_SIGN'
+  - 'DARK_OAK_WALL_SIGN'
+  - 'ACACIA_WALL_SIGN'
+  - 'BIRCH_WALL_SIGN'
+  - 'OAK_WALL_SIGN'
+  - 'JUNGLE_WALL_SIGN'
+  - 'WARPED_WALL_SIGN'
+  - 'CRIMSON_WALL_SIGN'
+
+team-items: # what can be a chest of a team
+  - 'CHEST'
+  - 'TRAPPED_CHEST'
