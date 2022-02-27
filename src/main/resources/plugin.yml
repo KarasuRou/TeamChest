@@ -1,82 +1,18 @@
 name: TeamChest
-version: 1.0.0
+version: 0.1
 main: karasurou.teamchest.TeamChest
 author: Rouven Tjalf Rosploch (KarasuRou)
-description: des
+description: This plugin can create teams, which lead can designate a chest, that every team-member can use.
 api-version: 1.18
 commands:
-  debug:
-    usage: /debug
-    permission: teamchest.debug
-    permission-message: You don't have permission to ... #TODO
-  createTeam:
-    description: Creates a team
-    usage: /createTeam [name]
-    permission: teamchest.createteam
-    permission-message: You don't have permission to ... #TODO
-  deleteTeam:
-    description: Creates a team
-    usage: /deleteTeam [name]
-    permission: teamchest.deleteteam
-    permission-message: You don't have permission to ... #TODO
-  inviteToTeam:
-    description: Invites to a team
-    usage: /inviteToTeam [player] [team]
-    permission: teamchest.invitetoteam
-    permission-message: You don't have permission to ... #TODO
-  acceptTeamInvitation:
-    description: Accepts a team invitation and joins it
-    usage: /acceptTeamInvitation [team]
-    permission: teamchest.acceptteaminvitation
-    permission-message: You don't have permission to ... #TODO
-  denyTeamInvitation:
-    description: Denys a team invitation and not join it
-    usage: /denyTeamInvitation [team]
-    permission: teamchest.denyteaminvitation
-    permission-message: You don't have permission to ... #TODO
-  leaveTeam:
-    description: Leaves a team
-    usage: /leaveTeam [team]
-    permission: teamchest.leaveteam
-    permission-message: You don't have permission to ... #TODO
-  kickFromTeam:
-    description: Kicks a player from a team
-    usage: /kickFromTeam [player] [team]
-    permission: teamchest.kickfromteam
-    permission-message: You don't have permission to ... #TODO
+  teamchest:
+    permission: teamchest.command
+    usage: /tc
+    aliases: [tc, tech]
 permissions:
-  teamchest.*:
-    description: des #TODO
-    children:
-      teamchest.debug: false
-      teamchest.createteam: true
-      teamchest.deleteteam: true
-      teamchest.invitetoteam: true
-      teamchest.acceptteaminvitation: true
-      teamchest.denyteaminvitation: true
-      teamchest.leaveteam: true
-      teamchest.kickfromteam: true
   teamchest.debug:
-    description: des #TODO
+    description: This permission is only for debug informations and should only be given to admins!
     default: op
-  teamchest.createteam:
-    description: des #TODO
-    default: true
-  teamchest.deleteteam:
-    description: des #TODO
-    default: true
-  teamchest.invitetoteam:
-    description: des #TODO
-    default: true
-  teamchest.acceptteaminvitation:
-    description: des #TODO
-    default: true
-  teamchest.denyteaminvitation:
-    description: des #TODO
-    default: true
-  teamchest.leaveteam:
-    description: des #TODO
-    default: true
-  teamchest.kickfromteam:
-    description: des #TODO
+  teamchest.command:
+    description: Basic command permission, for team creation and chest usage
     default: true

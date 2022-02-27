@@ -1,1 +1,4 @@
-commando-usage: "[ASD] ASD"
+commando-usage: "&b[TeamChest] &kPlugin Hilfe:\n&k- createTeam [teamName] (Erstellt ein Team, mit dir als Eigentümer)\n&k- deleteTeam [teamName] (Löscht ein Team, wenn du der Eigentümer bist)\n&k- inviteToTeam [player] [teamName] (Läd ein Spieler zum Team ein)\n&k- acceptTeamInvitation [teamName] (Akzeptiert die Einladung)\n&k- denyTeamInvitation [teamName] (Lehnt die Einladung ab)\n&k- leaveTeam [teamName] (Du verlässt das Team, solange du nicht der Eigentümer bist)\n&k- kickFromTeam [player] [teamName] (Entfernt ein Spieler vom Team, wenn du der Eigentümer bist)"
+no-permission: "&b[TeamChest] &cDu hast keine Berechtigung um dies zu tun."
+no-player: "&b[TeamChest] &cDu musst ein Spieler sein um dieses Kommando auszuführen!"
+no-success-error: "&b[TeamChest] &c[ERROR]\n&cEs ist ein Fehler beim Ausführen dieses Kommandos aufgetreten!"

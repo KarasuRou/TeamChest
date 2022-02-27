@@ -3,7 +3,7 @@ This Minecraft plugin can create teams, which lead can designate a chest, that e
 <br/><br/>
 
 Todos:
-- [ ] Make commands work (with error text etc.)
+- [X] Make commands work (with error text etc.)
 - [ ] Use listeners
 - [ ] Use teams
 - [ ] Combine listener and teams
