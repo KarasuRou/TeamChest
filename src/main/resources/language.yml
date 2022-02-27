@@ -1,1 +1,4 @@
-commando-usage: "[ASD] ASD"
+commando-usage: "&b[TeamChest]&k plugin help:\n&k- createTeam [teamName] (Create a team with you as the owner)\n&k- deleteTeam [teamName] (Delete the team if you are the owner)\n&k- inviteToTeam [player] [teamName] (Invite a player to a team)\n&k- acceptTeamInvitation [teamName] (Accept the team invitation)\n&k- denyTeamInvitation [teamName] (Deny the team invitation)\n&k- leaveTeam [teamName] (Leave the team, if you are not the owner)\n&k- kickFromTeam [player] [teamName] (Kick player from team, if you are the owner)"
+no-permission: "&b[TeamChest] &cYou don't have permission to do that."
+no-player: "&b[TeamChest] &cYou have to be a player to use this command!"
+no-success-error: "&b[TeamChest] &c[ERROR]\n&cAn error occurred while executing the command!"
