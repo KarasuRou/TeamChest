@@ -20,9 +20,10 @@ public class TeamChest extends JavaPlugin {
     private static Plugin plugin;
 
     @Override
-    public void onEnable() {// TODO: 25.02.2022  
-        plugin = this;
-        Config.loadConfig(this);
+    public void onEnable() {// TODO: 25.02.2022
+        super.onEnable();
+//        plugin = this;
+//        Config.loadConfig(this);
     }
 
     public static Plugin getPlugin(){
