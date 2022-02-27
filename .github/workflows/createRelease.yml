@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - development #Testrun only
+      - develop #Testrun only
 
 jobs:
   build:
