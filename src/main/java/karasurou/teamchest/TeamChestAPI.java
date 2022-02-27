@@ -34,18 +34,30 @@ public class TeamChestAPI {
     }
 
     public static boolean createNewTeam(String teamName, Player owner) {
-        return false;
-    }
-
-    public static boolean addPlayerToTeam(String teamName, Player player) {
-        return false;
-    }
-
-    public static boolean removePlayerFromTeam(String teamName, Player player) {
-        return false;
+        return true;
     }
 
     public static boolean deleteTeam(String teamName, Player player) {
-        return false;
+        return true;
+    }
+
+    public static boolean acceptInvitation(String teamName, Player player) {
+        return true;
+    }
+
+    public static boolean denyInvitation(String teamName, Player player) {
+        return true;
+    }
+
+    public static boolean leaveTeam(String teamName, Player player) {
+        return true;
+    }
+
+    public static boolean inviteToTeam(String teamName, String player, Player sendPlayer) {
+        return true;
+    }
+
+    public static boolean kickFromTeam(String teamName, String player, Player sendPlayer) {
+        return true;
     }
 }
