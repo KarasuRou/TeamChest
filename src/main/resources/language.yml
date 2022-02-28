@@ -1,4 +1,4 @@
-####################################
+########################################################################
 # command helpers
 plugin-help: "&b[TeamChest]&e plugin help:"
 command-help: "&b[TeamChest]&e command help:"
@@ -13,12 +13,12 @@ command_denyteaminvitation: "denyTeamInvitation [teamName] (Deny the team invita
 command_leaveteam: "leaveTeam [teamName] (Leave the team, if you are not the owner)"
 command_kickfromteam: "kickFromTeam [player] [teamName] (Kick player from team, if you are the owner)"
 #
-####################################
+########################################################################
 
-####################################
+########################################################################
 # permissions and errors
 no-permission: "&b[TeamChest]&c You don't have permission to do that."
 no-player: "&b[TeamChest]&c You have to be a player to use this command!"
 no-success-error: "&b[TeamChest]&4 [ERROR]&c\nAn error occurred while executing the command!"
 #
-####################################
+########################################################################
