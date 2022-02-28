@@ -79,6 +79,10 @@ public class TeamChest extends JavaPlugin {
                         return true;
                     }
                     if (args.length == 2) {
+                        if (TeamChestAPI.teamDontExists(args[1])) {
+                            sender.sendMessage(Config.getLanguage("no-team"));
+                            return true;
+                        }
                         switch (args[0]) {
                             case "createTeam":
                                 success = TeamChestAPI.createNewTeam(args[1], (Player) sender);
@@ -101,6 +105,10 @@ public class TeamChest extends JavaPlugin {
                                 break;
                         }
                     } else if (args.length == 3) {
+                        if (TeamChestAPI.teamDontExists(args[1])) {
+                            sender.sendMessage(Config.getLanguage("no-team"));
+                            return true;
+                        }
                         switch (args[0]) {
                             case "inviteToTeam":
                                 success = TeamChestAPI.inviteToTeam(args[1], args[2], (Player) sender);

@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 
 public class TeamChestAPI {
 
-    private TeamChestAPI(){}// TODO: 25.02.2022
+    private TeamChestAPI(){}
 
     public static boolean isSign(Block block){
         switch (block.getType()) {
@@ -31,6 +31,10 @@ public class TeamChestAPI {
             default:
                 return false;
         }
+    }
+
+    public static boolean teamDontExists(String teamName) {
+        return false;
     }
 
     public static boolean createNewTeam(String teamName, Player owner) {
