@@ -192,10 +192,10 @@ public class TeamChest extends JavaPlugin {
     private List<String> getSenderCommands(CommandSender sender) {
         List<String> senderCommands = new ArrayList<>();
         if (sender.hasPermission("teamchest.debug")) {
-            senderCommands.addAll(debugCommands.subList(0, debugCommands.size() - 1));
+            senderCommands.addAll(debugCommands.subList(0, debugCommands.size()));
         }
         if (sender.hasPermission("teamchest.command")) {
-            senderCommands.addAll(commands.subList(0, commands.size() - 1));
+            senderCommands.addAll(commands.subList(0, commands.size()));
         }
         return senderCommands;
     }
