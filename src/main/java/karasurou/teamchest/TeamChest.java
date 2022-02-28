@@ -24,38 +24,28 @@ import java.util.List;
 public class TeamChest extends JavaPlugin {
 
     private static Plugin plugin;
+    private final static List<String> commands = new ArrayList<>();
 
     @Override
     public void onEnable() {// TODO: 25.02.2022
+        fillAllCommands();
         plugin = this;
         Config.loadConfig(this);
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> commands = new ArrayList<>();
-        if (sender.hasPermission("teamchest.debug")) {
-            commands.add("debug");
-        }
-        if (sender.hasPermission("teamchest.command")) {
-            commands.add("createTeam");
-            commands.add("deleteTeam");
-            commands.add("inviteToTeam");
-            commands.add("acceptTeamInvitation");
-            commands.add("denyTeamInvitation");
-            commands.add("leaveTeam");
-            commands.add("kickFromTeam");
-        }
+        List<String> senderCommands = getSenderCommands(sender);
         if (args != null && args.length == 1) {
             List<String> list = new ArrayList<>();
-            for (String s : commands) {
+            for (String s : senderCommands) {
                 if (s.startsWith(args[0])) {
                     list.add(s);
                 }
             }
             return list;
         }
-        return commands;
+        return senderCommands;
     }
 
     public static Plugin getPlugin(){
@@ -66,7 +56,7 @@ public class TeamChest extends JavaPlugin {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equals("teamchest")) {
             if (args.length == 0) {
-                sender.sendMessage(Config.getLanguage("commando-usage"));
+                Utilities.sendAllCommandHelp(sender, this);
             } else {
                 // These commands do not require a player
                 if (args[0].equalsIgnoreCase("debug")) {
@@ -82,7 +72,7 @@ public class TeamChest extends JavaPlugin {
                     }
                     return true;
                 } else if (sender.hasPermission("teamchest.command")) {
-                    boolean success = false;
+                    boolean success;
                     // These commands require a player
                     if (sender instanceof ConsoleCommandSender) {
                         sender.sendMessage(Config.getLanguage("no-player"));
@@ -106,7 +96,8 @@ public class TeamChest extends JavaPlugin {
                                 success = TeamChestAPI.leaveTeam(args[1], (Player) sender);
                                 break;
                             default:
-                                sender.sendMessage(Config.getLanguage("commando-usage"));
+                                Utilities.sendCommandHelp(args[0], sender, this);
+                                success = true;
                                 break;
                         }
                     } else if (args.length == 3) {
@@ -118,11 +109,13 @@ public class TeamChest extends JavaPlugin {
                                 success = TeamChestAPI.kickFromTeam(args[1], args[2], (Player) sender);
                                 break;
                             default:
-                                sender.sendMessage(Config.getLanguage("commando-usage"));
+                                Utilities.sendCommandHelp(args[0], sender, this);
+                                success = true;
                                 break;
                         }
                     } else {
-                        sender.sendMessage(Config.getLanguage("commando-usage"));
+                        Utilities.sendCommandHelp(args[0], sender, this);
+                        success = true;
                     }
                     if (!success) {
                         // If command was not successful
@@ -134,5 +127,31 @@ public class TeamChest extends JavaPlugin {
             }
         }
         return true;
+    }
+
+    private void fillAllCommands() {
+        commands.add("debug");
+        commands.add("createTeam");
+        commands.add("deleteTeam");
+        commands.add("inviteToTeam");
+        commands.add("acceptTeamInvitation");
+        commands.add("denyTeamInvitation");
+        commands.add("leaveTeam");
+        commands.add("kickFromTeam");
+    }
+
+    public String[] getCommands(CommandSender sender) {
+        return getSenderCommands(sender).toArray(new String[0]);
+    }
+
+    private List<String> getSenderCommands(CommandSender sender) {
+        List<String> senderCommands = new ArrayList<>();
+        if (sender.hasPermission("teamchest.debug")) {
+            senderCommands.add(commands.get(0));
+        }
+        if (sender.hasPermission("teamchest.command")) {
+            senderCommands.addAll(commands.subList(1, commands.size() - 1));
+        }
+        return senderCommands;
     }
 }
