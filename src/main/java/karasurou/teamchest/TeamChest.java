@@ -24,6 +24,7 @@ import java.util.List;
 public class TeamChest extends JavaPlugin {
 
     private static Plugin plugin;
+    private final static List<String> debugCommands = new ArrayList<>();
     private final static List<String> commands = new ArrayList<>();
 
     @Override
@@ -79,7 +80,7 @@ public class TeamChest extends JavaPlugin {
                         return true;
                     }
                     if (args.length == 2) {
-                        if (TeamChestAPI.teamDontExists(args[1])) {
+                        if (TeamChestAPI.teamDontExists(args[1]) && !args[0].equals("createTeam")) {
                             sender.sendMessage(Config.getLanguage("no-team"));
                             return true;
                         }
@@ -138,7 +139,7 @@ public class TeamChest extends JavaPlugin {
     }
 
     private void fillAllCommands() {
-        commands.add("debug");
+        debugCommands.add("debug");
         commands.add("createTeam");
         commands.add("deleteTeam");
         commands.add("inviteToTeam");
@@ -155,10 +156,10 @@ public class TeamChest extends JavaPlugin {
     private List<String> getSenderCommands(CommandSender sender) {
         List<String> senderCommands = new ArrayList<>();
         if (sender.hasPermission("teamchest.debug")) {
-            senderCommands.add(commands.get(0));
+            senderCommands.addAll(debugCommands.subList(0, debugCommands.size() - 1));
         }
         if (sender.hasPermission("teamchest.command")) {
-            senderCommands.addAll(commands.subList(1, commands.size() - 1));
+            senderCommands.addAll(commands.subList(0, commands.size() - 1));
         }
         return senderCommands;
     }
