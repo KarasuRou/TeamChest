@@ -87,7 +87,7 @@ public class Config {
     }
 
     public static String getLanguage(String path) {
-        return ChatColor.translateAlternateColorCodes('&', language.getString(path, ""));
+        return ChatColor.translateAlternateColorCodes('&', language.getString(path, "&b[TeamChest]&4 [ERROR]: " + path));
     }
 
     public static boolean isSignLine(String line) {
