@@ -18,6 +18,8 @@ command_kickfromteam: "kickFromTeam [player] [teamName] (Kick player from team, 
 ########################################################################
 # permissions and errors
 no-permission: "&b[TeamChest]&c You don't have permission to do that."
+no-team: "&b[TeamChest]&c No team exists with that name!"
+no-teamowner: "&b[TeamChest]&c You have to be the team leader to do that."
 no-player: "&b[TeamChest]&c You have to be a player to use this command!"
 no-success-error: "&b[TeamChest]&4 [ERROR]&c\nAn error occurred while executing the command!"
 #
