@@ -1,4 +1,24 @@
-commando-usage: "&b[TeamChest]&e plugin help:\n&r- createTeam [teamName] (Create a team with you as the owner)\n&r- deleteTeam [teamName] (Delete the team if you are the owner)\n&r- inviteToTeam [player] [teamName] (Invite a player to a team)\n&r- acceptTeamInvitation [teamName] (Accept the team invitation)\n&r- denyTeamInvitation [teamName] (Deny the team invitation)\n&r- leaveTeam [teamName] (Leave the team, if you are not the owner)\n&r- kickFromTeam [player] [teamName] (Kick player from team, if you are the owner)"
-no-permission: "&b[TeamChest] &cYou don't have permission to do that."
-no-player: "&b[TeamChest] &cYou have to be a player to use this command!"
-no-success-error: "&b[TeamChest] &4[ERROR]\n&cAn error occurred while executing the command!"
+####################################
+# command helpers
+plugin-help: "&b[TeamChest]&e plugin help:"
+command-help: "&b[TeamChest]&e command help:"
+no-command-found: "&b[TeamChest]&4 [ERROR]&c No command found!"
+invalid-command: "&b[TeamChest]&e Invalid command detected. Did you used it correctly?"
+no-commands-detected: "&b[TeamChest]&e Invalid command detected. Did you mean one of these?"
+command_createteam: "createTeam [teamName] (Create a team with you as the owner)"
+command_deleteteam: "deleteTeam [teamName] (Delete the team if you are the owner)"
+command_invitetoteam: "inviteToTeam [player] [teamName] (Invite a player to a team)"
+command_acceptteaminvitation: "acceptTeamInvitation [teamName] (Accept the team invitation)"
+command_denyteaminvitation: "denyTeamInvitation [teamName] (Deny the team invitation)"
+command_leaveteam: "leaveTeam [teamName] (Leave the team, if you are not the owner)"
+command_kickfromteam: "kickFromTeam [player] [teamName] (Kick player from team, if you are the owner)"
+#
+####################################
+
+####################################
+# permissions and errors
+no-permission: "&b[TeamChest]&c You don't have permission to do that."
+no-player: "&b[TeamChest]&c You have to be a player to use this command!"
+no-success-error: "&b[TeamChest]&4 [ERROR]&c\nAn error occurred while executing the command!"
+#
+####################################
