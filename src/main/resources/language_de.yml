@@ -16,6 +16,14 @@ command_kickfromteam: "kickFromTeam [player] [teamName] (Entfernt ein Spieler vo
 ########################################################################
 
 ########################################################################
+# Erfolge und Nachrichten
+team_1: "Team&6 \"[TEAM]\"&r (Eigentümer:&r [OWNER]&r)"
+team_2_nomembers: "&r hat keine Mitglieder!"
+team_2_member: "&r hat folgende Mitglieder: "
+#
+########################################################################
+
+########################################################################
 # Berechtigungen und Fehler
 no-permission: "&b[TeamChest]&c Du hast keine Berechtigung, um dies zu tun."
 no-team: "&b[TeamChest]&c Es existiert kein Team mit diesem Namen!"

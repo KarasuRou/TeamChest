@@ -3,6 +3,8 @@ package karasurou.teamchest;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
+
 public class TeamChestAPI {
 
     private TeamChestAPI(){}
@@ -31,6 +33,10 @@ public class TeamChestAPI {
             default:
                 return false;
         }
+    }
+
+    public static HashMap<String, String[]> getAllTeams() {
+        return new HashMap<>();
     }
 
     public static boolean teamDontExists(String teamName) {

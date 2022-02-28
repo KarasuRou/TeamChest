@@ -16,6 +16,14 @@ command_kickfromteam: "kickFromTeam [player] [teamName] (Kick player from team, 
 ########################################################################
 
 ########################################################################
+# successes and messages
+team_1: "Team&6 \"[TEAM]\"&r (Owner:&r [OWNER]&r)"
+team_2_nomembers: "&r has no members!"
+team_2_member: "&r have following members: "
+#
+########################################################################
+
+########################################################################
 # permissions and errors
 no-permission: "&b[TeamChest]&c You don't have permission to do that."
 no-team: "&b[TeamChest]&c No team exists with that name!"

@@ -35,7 +35,7 @@ public class Utilities {
                     sender.sendMessage(Config.getLanguage("no-commands-detected"));
                 }
                 for (String com : list) {
-                    if (!com.equalsIgnoreCase("debug")) {
+                    if (!com.equalsIgnoreCase("debug") && !command.equalsIgnoreCase("getallteams")) {
                         sender.sendMessage(begin + Config.getLanguage("command_" + com.toLowerCase()));
                     }
                 }
@@ -50,7 +50,7 @@ public class Utilities {
         if (commands.length <= 1)
             begin = "";
         for (String command : commands) {
-            if (!command.equalsIgnoreCase("debug")) {
+            if (!command.equalsIgnoreCase("debug") && !command.equalsIgnoreCase("getallteams")) {
                 sender.sendMessage(begin + Config.getLanguage("command_" + command.toLowerCase()));
             }
         }

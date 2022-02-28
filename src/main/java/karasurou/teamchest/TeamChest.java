@@ -9,6 +9,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 // TODO: 25.02.2022  
@@ -56,23 +57,55 @@ public class TeamChest extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equals("teamchest")) {
-            if (args.length == 0) {
-                Utilities.sendAllCommandHelp(sender, this);
-            } else {
+            if (args.length != 0) {
                 // These commands do not require a player
-                if (args[0].equalsIgnoreCase("debug")) {
+                if (debugCommands.contains(args[0])) {
                     if (!sender.hasPermission("teamchest.debug")) {
                         sender.sendMessage(Config.getLanguage("no-permission"));
-                    } else {
-                        sender.sendMessage("TeamChest Debug");
-                        sender.sendMessage("TeamChest: v" + getDescription().getVersion());
-                        sender.sendMessage("Plugin for Minecraft version: " + getDescription().getAPIVersion());
-                        sender.sendMessage("Bukkit: v" + Bukkit.getServer().getClass().getPackage().getName().split("v")[1]);
-                        sender.sendMessage("Server version: " + Bukkit.getVersion());
-                        sender.sendMessage("Detected language: " + System.getProperty("user.language"));
+                        return true;
+                    }
+                    switch (args[0]) {
+                        case "debug":
+                            sender.sendMessage("TeamChest Debug");
+                            sender.sendMessage("TeamChest: v" + getDescription().getVersion());
+                            sender.sendMessage("Plugin for Minecraft version: " + getDescription().getAPIVersion());
+                            sender.sendMessage("Bukkit: v" + Bukkit.getServer().getClass().getPackage().getName().split("v")[1]);
+                            sender.sendMessage("Server version: " + Bukkit.getVersion());
+                            sender.sendMessage("Detected language: " + System.getProperty("user.language"));
+                            break;
+                        case "getAllTeams":
+                            HashMap<String, String[]> teamPlayerMap = TeamChestAPI.getAllTeams();
+                            String[] teams = teamPlayerMap.keySet().toArray(new String[0]);
+                            for (String team : teams) {
+                                String[] player = teamPlayerMap.get(team);
+                                String output = Config.getLanguage("team_1")
+                                        .replace("[TEAM]", team)
+                                        .replace("[OWNER]", player[0]);
+                                if (player.length == 1) {
+                                    output += Config.getLanguage("team_2_nomembers");
+                                } else {
+                                    output += Config.getLanguage("team_2_members");
+                                    for (int i = 1; i < player.length; i++) {
+                                        output += player[i];
+                                        if (i != player.length - 1) {
+                                            output += ", ";
+                                        }
+                                    }
+                                }
+                                sender.sendMessage(output);
+                            }
+                            break;
+                        default:
+                            break;
+
                     }
                     return true;
-                } else if (sender.hasPermission("teamchest.command")) {
+                }
+                if (commands.contains(args[0])) {
+                    if (!sender.hasPermission("teamchest.command")) {
+                        sender.sendMessage(Config.getLanguage("no-permission"));
+                        return true;
+                    }
                     boolean success;
                     // These commands require a player
                     if (sender instanceof ConsoleCommandSender) {
@@ -129,17 +162,20 @@ public class TeamChest extends JavaPlugin {
                     if (!success) {
                         // If command was not successful
                         sender.sendMessage(Config.getLanguage("no-success-error"));
+                        return true;
                     }
-                } else {
-                    sender.sendMessage(Config.getLanguage("no-permission"));
                 }
             }
+            // If no command was detected, print all
+            Utilities.sendAllCommandHelp(sender, this);
+            return true;
         }
         return true;
     }
 
     private void fillAllCommands() {
         debugCommands.add("debug");
+        debugCommands.add("getAllTeams");
         commands.add("createTeam");
         commands.add("deleteTeam");
         commands.add("inviteToTeam");
