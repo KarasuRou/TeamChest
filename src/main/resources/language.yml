@@ -7,11 +7,11 @@ invalid-command: "&b[TeamChest]&e Invalid command detected. Did you used it corr
 no-commands-detected: "&b[TeamChest]&e Invalid command detected. Did you mean one of these?"
 command_createteam: "createTeam [teamName] (Create a team with you as the owner)"
 command_deleteteam: "deleteTeam [teamName] (Delete the team if you are the owner)"
-command_invitetoteam: "inviteToTeam [player] [teamName] (Invite a player to a team)"
+command_invitetoteam: "inviteToTeam [teamName] [player] (Invite a player to a team)"
 command_acceptteaminvitation: "acceptTeamInvitation [teamName] (Accept the team invitation)"
 command_denyteaminvitation: "denyTeamInvitation [teamName] (Deny the team invitation)"
 command_leaveteam: "leaveTeam [teamName] (Leave the team, if you are not the owner)"
-command_kickfromteam: "kickFromTeam [player] [teamName] (Kick player from team, if you are the owner)"
+command_kickfromteam: "kickFromTeam [teamName] [player] (Kick player from team, if you are the owner)"
 #
 ########################################################################
 

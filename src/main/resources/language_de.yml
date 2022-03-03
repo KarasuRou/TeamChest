@@ -7,11 +7,11 @@ invalid-command: "&b[TeamChest]&e Ungültiges Kommando erfasst. Hast du es richt
 no-commands-detected: "&b[TeamChest]&e Ungültiges Kommando erfasst. Meinst du eins der folgenden?"
 command_createteam: "createTeam [teamName] (Erstellt ein Team, mit dir als Eigentümer)"
 command_deleteteam: "deleteTeam [teamName] (Löscht ein Team, wenn du der Eigentümer bist)"
-command_invitetoteam: "inviteToTeam [player] [teamName] (Läd ein Spieler zum Team ein)"
+command_invitetoteam: "inviteToTeam [teamName] [player] (Läd ein Spieler zum Team ein)"
 command_acceptteaminvitation: "acceptTeamInvitation [teamName] (Akzeptiert die Einladung)"
 command_denyteaminvitation: "denyTeamInvitation [teamName] (Lehnt die Einladung ab)"
 command_leaveteam: "leaveTeam [teamName] (Du verlässt das Team, solange du nicht der Eigentümer bist)"
-command_kickfromteam: "kickFromTeam [player] [teamName] (Entfernt ein Spieler vom Team, wenn du der Eigentümer bist)"
+command_kickfromteam: "kickFromTeam [teamName] [player] (Entfernt ein Spieler vom Team, wenn du der Eigentümer bist)"
 #
 ########################################################################
 

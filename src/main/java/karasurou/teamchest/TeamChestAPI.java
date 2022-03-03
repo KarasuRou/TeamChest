@@ -5,7 +5,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.json.*;
 
+import javax.annotation.Nullable;
 import java.io.*;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class TeamChestAPI {
@@ -96,18 +98,21 @@ public class TeamChestAPI {
         return false;
     }
 
-    public static boolean acceptInvitation(String teamName, Player player) {// TODO: 03.03.2022
+    public static boolean acceptInvitation(String teamName, Player player) {
         try {
-//            return true;
+            removePlayerInvitation(teamName, player.getName());
+            addPlayerToTeam(teamName, player.getName());
+            return true;
         } catch (Exception e) {
             plugin.getLogger().severe(e.getMessage());
         }
         return false;
     }
 
-    public static boolean denyInvitation(String teamName, Player player) {// TODO: 03.03.2022
+    public static boolean denyInvitation(String teamName, Player player) {
         try {
-//            return true;
+            removePlayerInvitation(teamName, player.getName());
+            return true;
         } catch (Exception e) {
             plugin.getLogger().severe(e.getMessage());
         }
@@ -124,9 +129,15 @@ public class TeamChestAPI {
         return false;
     }
 
-    public static boolean inviteToTeam(String teamName, String player, Player sendPlayer) {// TODO: 03.03.2022
+    public static boolean inviteToTeam(String teamName, String player, Player sendPlayer) {
         try {
-//            return true;
+            if (getMembersFromTeam(teamName)[0].equals(sendPlayer.getName())) {
+                addPlayerInvitation(teamName, player);
+                return true;
+            } else {
+                sendPlayer.sendMessage(Config.getLanguage("NOT OWNER"));// TODO: 03.03.2022
+            }
+            return true;
         } catch (Exception e) {
             plugin.getLogger().severe(e.getMessage());
         }
@@ -151,7 +162,7 @@ public class TeamChestAPI {
         return EditTeamFile.getTeams();
     }
 
-    private static String[] getMembersFromTeam(String teamName) throws IOException {
+    private static String[] getMembersFromTeam(String teamName) {
         return EditTeamFile.getMembersFromTeam(teamName);
     }
 
@@ -163,10 +174,10 @@ public class TeamChestAPI {
         EditTeamFile.removeTeam(teamName);
     }
 
-    private static void addPlayerFromTeam(String teamName, String member) throws IOException {
+    private static void addPlayerToTeam(String teamName, String member) throws IOException {
         String[] beforeMember = EditTeamFile.getMembersFromTeam(teamName);
         String[] afterMember = new String[beforeMember.length + 1];
-        System.arraycopy(beforeMember, 0, afterMember, 0, afterMember.length);
+        System.arraycopy(beforeMember, 0, afterMember, 0, beforeMember.length);
         afterMember[beforeMember.length] = member;
         EditTeamFile.setMembersFromTeam(teamName, afterMember);
     }
@@ -184,61 +195,132 @@ public class TeamChestAPI {
         EditTeamFile.setMembersFromTeam(teamName, afterMember);
     }
 
+    private static void addPlayerInvitation(String teamName, String player) throws IOException {
+        String[] beforeMember = EditTeamFile.getInvitationsForTeam(teamName);
+        String[] afterMember;
+        if (beforeMember != null) {
+            afterMember = new String[beforeMember.length + 1];
+            System.arraycopy(beforeMember, 0, afterMember, 0, beforeMember.length);
+            afterMember[beforeMember.length] = player;
+        } else {
+            afterMember = new String[]{player};
+        }
+        EditTeamFile.setInvitationsForTeam(teamName, afterMember);
+    }
+
+    private static void removePlayerInvitation(String teamName, String player) throws IOException {
+        String[] beforeMember = EditTeamFile.getInvitationsForTeam(teamName);
+        String[] afterMember = new String[beforeMember.length - 1];
+        int i = 0;
+        for (String member : beforeMember) {
+            if (!member.equals(player)) {
+                afterMember[i] = member;
+                i++;
+            }
+        }
+        EditTeamFile.setInvitationsForTeam(teamName, afterMember);
+    }
+
     private static class EditTeamFile{
 
         private final static File file = new File(plugin.getDataFolder(),"teams.json");
+        private final static File invitationFile = new File(plugin.getDataFolder(),"teamINV.json");
         private final static HashMap<String, String[]> teamAndMemberCombination = new HashMap<>();
+        private final static HashMap<String, String[]> teamAndInvitationCombination = new HashMap<>();
 
         public static void init() {
-            if (!file.exists()) {
                 try {
-                    file.createNewFile();
+                    if (!file.exists()) {
+                        file.createNewFile();
+                    }
+                    if (!invitationFile.exists()) {
+                        invitationFile.createNewFile();
+                    }
                 } catch (IOException e) {
                     plugin.getLogger().severe(e.getMessage());
                 }
-            }
         }
 
         private EditTeamFile(){}
 
-        private static String[] getTeams() throws IOException {
-            new EditTeamFile().reloadFile();
+        private static String[] getTeams() {
+            new EditTeamFile().reloadFiles();
             return teamAndMemberCombination.keySet().toArray(new String[0]);
         }
 
         private static void addTeam(String teamName, String owner) throws IOException {
             teamAndMemberCombination.put(teamName, new String[]{owner});
-            new EditTeamFile().writeFile();
+            new EditTeamFile().writeTeamFile();
         }
 
         private static void removeTeam(String team) throws IOException {
             teamAndMemberCombination.remove(team);
-            new EditTeamFile().writeFile();
+            teamAndInvitationCombination.remove(team);
+            new EditTeamFile().writeTeamFile();
         }
 
-        private static String[] getMembersFromTeam(String teamName) throws IOException {
-            new EditTeamFile().reloadFile();
+        private static String[] getMembersFromTeam(String teamName) {
+            new EditTeamFile().reloadFiles();
             return teamAndMemberCombination.get(teamName);
         }
 
         private static void setMembersFromTeam(String team, String[] members) throws IOException {
             teamAndMemberCombination.replace(team, members);
-            new EditTeamFile().writeFile();
+            new EditTeamFile().writeTeamFile();
         }
 
-        private void reloadFile() throws IOException {
+        private static String[] getInvitationsForTeam(String teamName) {
+            new EditTeamFile().reloadFiles();
+            return teamAndInvitationCombination.get(teamName);
+        }
+
+        private static void setInvitationsForTeam(String team, @Nullable String[] members) throws IOException {
+            if (members == null) {
+                teamAndInvitationCombination.remove(team);
+            } else {
+                if (teamAndInvitationCombination.containsKey(team)) {
+                    teamAndInvitationCombination.replace(team, members);
+                } else {
+                    teamAndInvitationCombination.put(team, members);
+                }
+            }
+            new EditTeamFile().writeTeamFile();
+        }
+
+        private void reloadFiles() {
             teamAndMemberCombination.clear();
-            org.json.JSONObject teams = new org.json.JSONObject(new EditTeamFile().readFile());
-            JSONArray jsonArray = (JSONArray) teams.get("teams");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                String team = (String) jsonObject.keySet().toArray()[0];
-                String[] members = ((JSONArray)jsonObject.get(team)).toList().toArray(new String[0]);
-                teamAndMemberCombination.put(team, members);
+            JSONObject teams;
+            JSONArray memberArray;
+            try {
+                teams = new JSONObject(new EditTeamFile().readFile(file));
+                memberArray = (JSONArray) teams.get("teams");
+            } catch (Exception ignored) {
+                memberArray = new JSONArray();
+            }
+            JSONArray invitationMemberArray;
+            try {
+                teams = new JSONObject(new EditTeamFile().readFile(invitationFile));
+                invitationMemberArray = (JSONArray) teams.get("teams");
+            } catch (Exception ignored) {
+                invitationMemberArray = new JSONArray();
+            }
+            for (int i = 0; i < memberArray.length() || i < invitationMemberArray.length(); i++) {
+                if (i <= memberArray.length() - 1) {
+                    JSONObject jsonObject = memberArray.getJSONObject(i);
+                    String team = (String) jsonObject.keySet().toArray()[0];
+                    String[] members = ((JSONArray)jsonObject.get(team)).toList().toArray(new String[0]);
+                    teamAndMemberCombination.put(team, members);
+                }
+                if (i <= invitationMemberArray.length() - 1) {
+                    JSONObject jsonObject = invitationMemberArray.getJSONObject(i);
+                    String team = (String) jsonObject.keySet().toArray()[0];
+                    String[] members = ((JSONArray)jsonObject.get(team)).toList().toArray(new String[0]);
+                    teamAndInvitationCombination.put(team, members);
+                }
             }
         }
 
-        private String readFile() throws IOException {
+        private String readFile(File file) throws IOException {
             BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
             StringBuilder raw = new StringBuilder();
             String line;
@@ -248,11 +330,16 @@ public class TeamChestAPI {
             return raw.toString();
         }
 
-        private void writeFile() throws IOException {
-            String[] teams = teamAndMemberCombination.keySet().toArray(new String[0]);
+        private void writeTeamFile() throws IOException {
+            writeTeamFile(file, teamAndMemberCombination);
+            writeTeamFile(invitationFile, teamAndInvitationCombination);
+        }
+
+        private void writeTeamFile(File file, HashMap<String, String[]> hashMap) throws IOException {
+            String[] teams = hashMap.keySet().toArray(new String[0]);
             JSONArray jsonArray = new JSONArray();
             for (String team : teams) {
-                String[] member = teamAndMemberCombination.get(team);
+                String[] member = hashMap.get(team);
                 JSONObject object = new JSONObject();
                 object.put(team, member);
                 jsonArray.put(object);
