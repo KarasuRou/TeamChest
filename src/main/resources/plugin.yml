@@ -6,6 +6,7 @@ description: This plugin can create teams, which leader can designate a chest, t
 api-version: 1.18
 commands:
   teamchest:
+    description: Type "/teamchest", "/tc" or "/tech" for help.
     permission: teamchest.command
     usage: /tc
     aliases: [tc, tech]
@@ -14,5 +15,5 @@ permissions:
     description: This permission is only for debug informations and should only be given to admins!
     default: op
   teamchest.command:
-    description: Basic command permission, for team creation and chest usage
+    description: Basic command permission, for team creation and chest usage.
     default: true
