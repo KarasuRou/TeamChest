@@ -12,14 +12,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-// TODO: 25.02.2022  
+
 /**
  * <h3>MINECRAFT SERVER PLUGIN</h3>
  * This plugin will add a new feature ...<br/>
  * <br/>
  * Permissions if needed:<br/>
  * teamchest.com - des ({@code command})<br/>
- * @author Rouven Tjalf Rosploch (KarasuRou)
+ * @author Rouven Tjalf Rosploch (KarasuRou)// TODO: 25.02.2022
  * @version 1.0.0
  */
 public class TeamChest extends JavaPlugin {
@@ -29,23 +29,28 @@ public class TeamChest extends JavaPlugin {
     private final static List<String> commands = new ArrayList<>();
 
     @Override
-    public void onEnable() {// TODO: 25.02.2022
+    public void onEnable() {
         fillAllCommands();
         plugin = this;
         Config.loadConfig(this);
+        TeamChestAPI.init(this);
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> senderCommands = getSenderCommands(sender);
-        if (args != null && args.length == 1) {
-            List<String> list = new ArrayList<>();
-            for (String s : senderCommands) {
-                if (s.startsWith(args[0])) {
-                    list.add(s);
+        if (args != null) {
+            if (args.length == 1) {
+                List<String> list = new ArrayList<>();
+                for (String s : senderCommands) {
+                    if (s.startsWith(args[0])) {
+                        list.add(s);
+                    }
                 }
+                return list;
+            } else {
+                return null;
             }
-            return list;
         }
         return senderCommands;
     }
@@ -74,7 +79,7 @@ public class TeamChest extends JavaPlugin {
                             sender.sendMessage("Detected language: " + System.getProperty("user.language"));
                             break;
                         case "getAllTeams":
-                            HashMap<String, String[]> teamPlayerMap = TeamChestAPI.getAllTeams();
+                            HashMap<String, String[]> teamPlayerMap = TeamChestAPI.getAllTeamsAndMembers();
                             String[] teams = teamPlayerMap.keySet().toArray(new String[0]);
                             for (String team : teams) {
                                 String[] player = teamPlayerMap.get(team);
@@ -100,8 +105,7 @@ public class TeamChest extends JavaPlugin {
 
                     }
                     return true;
-                }
-                if (commands.contains(args[0])) {
+                } else if (commands.contains(args[0])) {
                     if (!sender.hasPermission("teamchest.command")) {
                         sender.sendMessage(Config.getLanguage("no-permission"));
                         return true;
@@ -119,7 +123,12 @@ public class TeamChest extends JavaPlugin {
                         }
                         switch (args[0]) {
                             case "createTeam":
-                                success = TeamChestAPI.createNewTeam(args[1], (Player) sender);
+                                if (!TeamChestAPI.teamDontExists(args[1])) {
+                                    sender.sendMessage(Config.getLanguage("TEAM ALREADY EXISTS"));// TODO: 03.03.2022
+                                    success = true;
+                                } else {
+                                    success = TeamChestAPI.createNewTeam(args[1], (Player) sender);
+                                }
                                 break;
                             case "deleteTeam":
                                 success = TeamChestAPI.deleteTeam(args[1], (Player) sender);
@@ -164,11 +173,16 @@ public class TeamChest extends JavaPlugin {
                         sender.sendMessage(Config.getLanguage("no-success-error"));
                         return true;
                     }
+                } else {
+                    // If no command was detected, print all
+                    Utilities.sendAllCommandHelp(sender, this);
+                    return true;
                 }
+            } else {
+                // If no command was detected, print all
+                Utilities.sendAllCommandHelp(sender, this);
+                return true;
             }
-            // If no command was detected, print all
-            Utilities.sendAllCommandHelp(sender, this);
-            return true;
         }
         return true;
     }
