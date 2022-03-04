@@ -124,7 +124,7 @@ public class TeamChest extends JavaPlugin {
                         switch (args[0]) {
                             case "createTeam":
                                 if (!TeamChestAPI.teamDontExists(args[1])) {
-                                    sender.sendMessage(Config.getLanguage("TEAM ALREADY EXISTS"));// TODO: 03.03.2022
+                                    sender.sendMessage(Config.getLanguage("team-exists"));
                                     success = true;
                                 } else {
                                     success = TeamChestAPI.createNewTeam(args[1], (Player) sender);

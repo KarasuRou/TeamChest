@@ -7,7 +7,6 @@ import org.json.*;
 
 import javax.annotation.Nullable;
 import java.io.*;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class TeamChestAPI {
@@ -77,6 +76,7 @@ public class TeamChestAPI {
     public static boolean createNewTeam(String teamName, Player owner) {
         try {
             addTeam(teamName, owner.getName());
+            owner.sendMessage(Config.getLanguage("team_created").replace("[TEAM]", teamName));
             return true;
         } catch (Exception e) {
             plugin.getLogger().severe(e.getMessage());
@@ -88,9 +88,10 @@ public class TeamChestAPI {
         try {
             if (getMembersFromTeam(teamName)[0].equals(player.getName())) {
                 removeTeam(teamName);
+                player.sendMessage(Config.getLanguage("team_deleted").replace("[TEAM]", teamName));
                 return true;
             } else {
-                player.sendMessage(Config.getLanguage("NOT OWNER"));// TODO: 03.03.2022
+                player.sendMessage(Config.getLanguage("no-teamowner"));
             }
         } catch (Exception e) {
             plugin.getLogger().severe(e.getMessage());
@@ -102,6 +103,7 @@ public class TeamChestAPI {
         try {
             removePlayerInvitation(teamName, player.getName());
             addPlayerToTeam(teamName, player.getName());
+            player.sendMessage(Config.getLanguage("team_acceptinvite").replace("[TEAM]", teamName));
             return true;
         } catch (Exception e) {
             plugin.getLogger().severe(e.getMessage());
@@ -112,6 +114,7 @@ public class TeamChestAPI {
     public static boolean denyInvitation(String teamName, Player player) {
         try {
             removePlayerInvitation(teamName, player.getName());
+            player.sendMessage(Config.getLanguage("team_denyinvite").replace("[TEAM]", teamName));
             return true;
         } catch (Exception e) {
             plugin.getLogger().severe(e.getMessage());
@@ -122,6 +125,7 @@ public class TeamChestAPI {
     public static boolean leaveTeam(String teamName, Player player) {
         try {
             removePlayerFromTeam(teamName, player.getName());
+            player.sendMessage(Config.getLanguage("team_leftteam").replace("[TEAM]", teamName));
             return true;
         } catch (Exception e) {
             plugin.getLogger().severe(e.getMessage());
@@ -133,9 +137,14 @@ public class TeamChestAPI {
         try {
             if (getMembersFromTeam(teamName)[0].equals(sendPlayer.getName())) {
                 addPlayerInvitation(teamName, player);
+                sendPlayer.sendMessage(
+                        Config.getLanguage("team_invite")
+                                .replace("[TEAM]", teamName)
+                                .replace("[PLAYER]", player)
+                );
                 return true;
             } else {
-                sendPlayer.sendMessage(Config.getLanguage("NOT OWNER"));// TODO: 03.03.2022
+                sendPlayer.sendMessage(Config.getLanguage("no-teamowner"));
             }
             return true;
         } catch (Exception e) {
@@ -148,9 +157,14 @@ public class TeamChestAPI {
         try {
             if (getMembersFromTeam(teamName)[0].equals(sendPlayer.getName())) {
                 removePlayerFromTeam(teamName, player);
+                sendPlayer.sendMessage(
+                        Config.getLanguage("team_kicked")
+                                .replace("[TEAM]", teamName)
+                                .replace("[PLAYER]", player)
+                );
                 return true;
             } else {
-                sendPlayer.sendMessage(Config.getLanguage("NOT OWNER"));// TODO: 03.03.2022
+                sendPlayer.sendMessage(Config.getLanguage("no-teamowner"));
             }
         } catch (Exception e) {
             plugin.getLogger().severe(e.getMessage());
@@ -232,9 +246,11 @@ public class TeamChestAPI {
                 try {
                     if (!file.exists()) {
                         file.createNewFile();
+                        plugin.getLogger().info(Config.getLanguage("teamfilecreated"));
                     }
                     if (!invitationFile.exists()) {
                         invitationFile.createNewFile();
+                        plugin.getLogger().info(Config.getLanguage("teaminvitationfilecreated"));
                     }
                 } catch (IOException e) {
                     plugin.getLogger().severe(e.getMessage());
