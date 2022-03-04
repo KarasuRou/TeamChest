@@ -49,7 +49,7 @@ public class TeamChest extends JavaPlugin {
                 }
                 return list;
             } else {
-                return null;
+                return new ArrayList<>();// TODO: 04.03.2022 Load Team-list for player (recommendation)?
             }
         }
         return senderCommands;
@@ -189,10 +189,10 @@ public class TeamChest extends JavaPlugin {
 
     private void fillAllCommands() {
         debugCommands.add("debug");
-        debugCommands.add("getAllTeams");
+        debugCommands.add("getAllTeams"); // TODO: 04.03.2022 Also for a single player (getMyTeams)
         commands.add("createTeam");
         commands.add("deleteTeam");
-        commands.add("inviteToTeam");
+        commands.add("inviteToTeam"); // TODO: 04.03.2022 Cancel Invitation (cancelTeamInvitation)
         commands.add("acceptTeamInvitation");
         commands.add("denyTeamInvitation");
         commands.add("leaveTeam");
