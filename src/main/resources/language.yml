@@ -1,4 +1,44 @@
-commando-usage: "&b[TeamChest]&k plugin help:\n&k- createTeam [teamName] (Create a team with you as the owner)\n&k- deleteTeam [teamName] (Delete the team if you are the owner)\n&k- inviteToTeam [player] [teamName] (Invite a player to a team)\n&k- acceptTeamInvitation [teamName] (Accept the team invitation)\n&k- denyTeamInvitation [teamName] (Deny the team invitation)\n&k- leaveTeam [teamName] (Leave the team, if you are not the owner)\n&k- kickFromTeam [player] [teamName] (Kick player from team, if you are the owner)"
-no-permission: "&b[TeamChest] &cYou don't have permission to do that."
-no-player: "&b[TeamChest] &cYou have to be a player to use this command!"
-no-success-error: "&b[TeamChest] &c[ERROR]\n&cAn error occurred while executing the command!"
+########################################################################
+# command helpers
+plugin-help: "&b[TeamChest]&e plugin help:"
+command-help: "&b[TeamChest]&e command help:"
+no-command-found: "&b[TeamChest]&4 [ERROR]&c No command found!"
+invalid-command: "&b[TeamChest]&e Invalid command detected. Did you used it correctly?"
+no-commands-detected: "&b[TeamChest]&e Invalid command detected. Did you mean one of these?"
+command_createteam: "createTeam [teamName] (Create a team with you as the owner)"
+command_deleteteam: "deleteTeam [teamName] (Delete the team if you are the owner)"
+command_invitetoteam: "inviteToTeam [teamName] [player] (Invite a player to a team)"
+command_acceptteaminvitation: "acceptTeamInvitation [teamName] (Accept the team invitation)"
+command_denyteaminvitation: "denyTeamInvitation [teamName] (Deny the team invitation)"
+command_leaveteam: "leaveTeam [teamName] (Leave the team, if you are not the owner)"
+command_kickfromteam: "kickFromTeam [teamName] [player] (Kick player from team, if you are the owner)"
+#
+########################################################################
+
+########################################################################
+# successes and messages
+team_1: "Team&6 [TEAM]&r (Owner:&6 [OWNER]&r)"
+team_2_nomembers: "&r has no members!"
+team_2_member: "&r have following members: "
+teamfilecreated: "Team-File was created."
+teaminvitationfilecreated: "Team-Invitation-File was created."
+team_created: "&b[TeamChest]&r Team&6 [TEAM]&r was created!"
+team_deleted: "&b[TeamChest]&r Team&6 [TEAM]&r was deleted!"
+team_invite: "&b[TeamChest]&r Player&6 [PLAYER]&r was invited to team&6 [TEAM]&r."
+team_acceptinvite: "&b[TeamChest]&r You are now a member of team&6 [TEAM]&r."
+team_denyinvite: "&b[TeamChest]&r You denied the invitation from team&6 [TEAM]&r."
+team_leftteam: "&b[TeamChest]&r You left team&6 [TEAM]&r."
+team_kicked: "&b[TeamChest]&r You kicked player&6 [PLAYER]&r from team&6 [TEAM]&r."
+#
+########################################################################
+
+########################################################################
+# permissions and errors
+no-permission: "&b[TeamChest]&c You don't have permission to do that."
+no-team: "&b[TeamChest]&c No team exists with that name!"
+team-exists: "&b[TeamChest]&c This team already exists!"
+no-teamowner: "&b[TeamChest]&c You have to be the team leader to do that."
+no-player: "&b[TeamChest]&c You have to be a player to use this command!"
+no-success-error: "&b[TeamChest]&4 [ERROR]&c\nAn error occurred while executing the command!"
+#
+########################################################################

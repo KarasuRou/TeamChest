@@ -1,4 +1,44 @@
-commando-usage: "&b[TeamChest] &kPlugin Hilfe:\n&k- createTeam [teamName] (Erstellt ein Team, mit dir als Eigentümer)\n&k- deleteTeam [teamName] (Löscht ein Team, wenn du der Eigentümer bist)\n&k- inviteToTeam [player] [teamName] (Läd ein Spieler zum Team ein)\n&k- acceptTeamInvitation [teamName] (Akzeptiert die Einladung)\n&k- denyTeamInvitation [teamName] (Lehnt die Einladung ab)\n&k- leaveTeam [teamName] (Du verlässt das Team, solange du nicht der Eigentümer bist)\n&k- kickFromTeam [player] [teamName] (Entfernt ein Spieler vom Team, wenn du der Eigentümer bist)"
-no-permission: "&b[TeamChest] &cDu hast keine Berechtigung um dies zu tun."
-no-player: "&b[TeamChest] &cDu musst ein Spieler sein um dieses Kommando auszuführen!"
-no-success-error: "&b[TeamChest] &c[ERROR]\n&cEs ist ein Fehler beim Ausführen dieses Kommandos aufgetreten!"
+########################################################################
+# Kommando hilfestellung
+plugin-help: "&b[TeamChest]&e Plugin Hilfe:"
+command-help: "&b[TeamChest]&e Kommando Hilfe:"
+no-command-found: "&b[TeamChest]&4 [ERROR]&c Kein Kommando gefunden!"
+invalid-command: "&b[TeamChest]&e Ungültiges Kommando erfasst. Hast du es richtig eingegeben?"
+no-commands-detected: "&b[TeamChest]&e Ungültiges Kommando erfasst. Meinst du eins der folgenden?"
+command_createteam: "createTeam [teamName] (Erstellt ein Team, mit dir als Eigentümer)"
+command_deleteteam: "deleteTeam [teamName] (Löscht ein Team, wenn du der Eigentümer bist)"
+command_invitetoteam: "inviteToTeam [teamName] [player] (Läd ein Spieler zum Team ein)"
+command_acceptteaminvitation: "acceptTeamInvitation [teamName] (Akzeptiert die Einladung)"
+command_denyteaminvitation: "denyTeamInvitation [teamName] (Lehnt die Einladung ab)"
+command_leaveteam: "leaveTeam [teamName] (Du verlässt das Team, solange du nicht der Eigentümer bist)"
+command_kickfromteam: "kickFromTeam [teamName] [player] (Entfernt ein Spieler vom Team, wenn du der Eigentümer bist)"
+#
+########################################################################
+
+########################################################################
+# Erfolge und Nachrichten
+team_1: "Team&6 [TEAM]&r (Eigentümer:&6 [OWNER]&r)"
+team_2_nomembers: "&r hat keine Mitglieder!"
+team_2_member: "&r hat folgende Mitglieder: "
+teamfilecreated: "Team-Datei wurde erstellt."
+teaminvitationfilecreated: "Team-Einladungsdatei wurde erstellt."
+team_created: "&b[TeamChest]&r Team&6 [TEAM]&r wurde erstellt!"
+team_deleted: "&b[TeamChest]&r Team&6 [TEAM]&r wurde gelöscht!"
+team_invite: "&b[TeamChest]&r Spieler&6 [PLAYER]&r wurde zum Team&6 [TEAM]&r eingeladen."
+team_acceptinvite: "&b[TeamChest]&r Du bist nun ein Mitglied vom Team&6 [TEAM]&r."
+team_denyinvite: "&b[TeamChest]&r Du hast die Einladung vom Team&6 [TEAM]&r abgelehnt."
+team_leftteam: "&b[TeamChest]&r Du hast das Team&6 [TEAM]&r verlassen&r."
+team_kicked: "&b[TeamChest]&r Du hast den Spieler&6 [PLAYER]&r vom Team&6 [TEAM]&r entfernt."
+#
+########################################################################
+
+########################################################################
+# Berechtigungen und Fehler
+no-permission: "&b[TeamChest]&c Du hast keine Berechtigung, um dies zu tun."
+no-team: "&b[TeamChest]&c Es existiert kein Team mit diesem Namen!"
+team-exists: "&b[TeamChest]&c Es existiert ein Team mit diesem Namen!"
+no-teamowner: "&b[TeamChest]&c Du musst der Team eigentümer sein, um dies zu tun."
+no-player: "&b[TeamChest]&c Du musst ein Spieler sein, um dieses Kommando auszuführen!"
+no-success-error: "&b[TeamChest]&4 [ERROR]&c\nEs ist ein Fehler beim Ausführen dieses Kommandos aufgetreten!"
+#
+########################################################################
