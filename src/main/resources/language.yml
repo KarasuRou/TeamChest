@@ -17,18 +17,18 @@ command_kickfromteam: "kickFromTeam [teamName] [player] (Kick player from team, 
 
 ########################################################################
 # successes and messages
-team_1: "Team&6 \"[TEAM]\"&r (Owner:&r [OWNER]&r)"
+team_1: "Team&6 [TEAM]&r (Owner:&6 [OWNER]&r)"
 team_2_nomembers: "&r has no members!"
 team_2_member: "&r have following members: "
 teamfilecreated: "Team-File was created."
 teaminvitationfilecreated: "Team-Invitation-File was created."
-team_created: "&b[TeamChest]&r Team&6 \"[TEAM]\"&r was created!"
-team_deleted: "&b[TeamChest]&r Team&6 \"[TEAM]\"&r was deleted!"
-team_invite: "&b[TeamChest]&r Player&6 \"[PLAYER]\"&r was invited to team&6 \"[TEAM]\"&r."
-team_acceptinvite: "&b[TeamChest]&r You are now a member of team&6 \"[TEAM]\"&r."
-team_denyinvite: "&b[TeamChest]&r You denied the invitation from team&6 \"[TEAM]\"&r."
-team_leftteam: "&b[TeamChest]&r You left team&6 \"[TEAM]\"&r."
-team_kicked: "&b[TeamChest]&r You kicked player&6 \"[PLAYER]\"&r from team&6 \"[TEAM]\"&r."
+team_created: "&b[TeamChest]&r Team&6 [TEAM]&r was created!"
+team_deleted: "&b[TeamChest]&r Team&6 [TEAM]&r was deleted!"
+team_invite: "&b[TeamChest]&r Player&6 [PLAYER]&r was invited to team&6 [TEAM]&r."
+team_acceptinvite: "&b[TeamChest]&r You are now a member of team&6 [TEAM]&r."
+team_denyinvite: "&b[TeamChest]&r You denied the invitation from team&6 [TEAM]&r."
+team_leftteam: "&b[TeamChest]&r You left team&6 [TEAM]&r."
+team_kicked: "&b[TeamChest]&r You kicked player&6 [PLAYER]&r from team&6 [TEAM]&r."
 #
 ########################################################################
 
