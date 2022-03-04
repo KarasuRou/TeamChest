@@ -34,6 +34,7 @@ public class TeamChest extends JavaPlugin {
         plugin = this;
         Config.loadConfig(this);
         TeamChestAPI.init(this);
+        getServer().getPluginManager().registerEvents(new ChestListener(), this);
     }
 
     @Override
