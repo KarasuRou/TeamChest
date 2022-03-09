@@ -1,7 +1,10 @@
 package karasurou.teamchest;
 
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.Plugin;
 import org.json.*;
 
@@ -44,6 +47,13 @@ public class TeamChestAPI {
             default:
                 return false;
         }
+    }
+
+    public static boolean isChest(InventoryHolder inventoryHolder){
+        if (inventoryHolder == null)
+            return false;
+
+        return inventoryHolder instanceof Chest || inventoryHolder instanceof DoubleChest;
     }
 
     public static HashMap<String, String[]> getAllTeamsAndMembers() {

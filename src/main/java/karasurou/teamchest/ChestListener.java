@@ -1,7 +1,5 @@
 package karasurou.teamchest;
 
-import org.bukkit.block.Chest;
-import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,24 +15,19 @@ public class ChestListener implements Listener {
         Player p = event.getPlayer();
         if (event.getClickedBlock() != null && TeamChestAPI.isChest(event.getClickedBlock()) && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             sendMessage(p, "You opened a chest!");
-            event.setCancelled(true);
+//            event.setCancelled(true);
         }
-//        else {
-//            sendMessage(p, "Something else");
-//        }
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onChestClose(InventoryMoveItemEvent event) {
+    public void onHopperThingsTryToMove(InventoryMoveItemEvent event) { //If chest protected -> NO! JUST NO! NO HOPPER!
         Player p = TeamChest.getPlugin().getServer().getPlayer("KarasuRou");
-        if (event.getSource().getHolder() instanceof Chest) {
-            sendMessage(p,"CHEST");
+        if (TeamChestAPI.isChest(event.getSource().getHolder())) {
+//            sendMessage(p, "Chest:" + event.getSource().getHolder());
+        } else {
+//            sendMessage(p, String.valueOf(event.getSource().getHolder()));
         }
-        if (event.getSource().getHolder() instanceof DoubleChest) {
-            sendMessage(p, "DOUBLE_CHEST");
-        }
-        sendMessage(p, "" + event.getSource().getHolder());
-        event.setCancelled(true);
+//        event.setCancelled(true);
     }
 
     private void sendMessage(Player player, String s) {
