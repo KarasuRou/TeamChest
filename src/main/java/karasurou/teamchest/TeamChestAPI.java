@@ -1,5 +1,7 @@
 package karasurou.teamchest;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
@@ -10,7 +12,10 @@ import org.json.*;
 
 import javax.annotation.Nullable;
 import java.io.*;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class TeamChestAPI {
 
@@ -266,19 +271,20 @@ public class TeamChestAPI {
     private static class EditTeamFile{
 
         private final static File file = new File(plugin.getDataFolder(),"teams.json");
-        private final static File invitationFile = new File(plugin.getDataFolder(),"teamINV.json");
         private final static HashMap<String, String[]> teamAndMemberCombination = new HashMap<>();
         private final static HashMap<String, String[]> teamAndInvitationCombination = new HashMap<>();
+        private final static HashMap<String, String> teamAndWorldCombination = new HashMap<>();
+        private final static HashMap<String, Location> teamAndChestCombination = new HashMap<>();
+        private final static HashMap<String, Location> teamAndSignCombination = new HashMap<>();
 
         public static void init() {
                 try {
                     if (!file.exists()) {
-                        file.createNewFile();
-                        plugin.getLogger().info(Config.getLanguage("teamfilecreated"));
-                    }
-                    if (!invitationFile.exists()) {
-                        invitationFile.createNewFile();
-                        plugin.getLogger().info(Config.getLanguage("teaminvitationfilecreated"));
+                        if (file.createNewFile()) {
+                            plugin.getLogger().info(Config.getLanguage("teamfilecreated"));
+                        } else {
+                            plugin.getLogger().severe(Config.getLanguage("teamfilecreated-error")); // TODO: 10.03.2022 language
+                        }
                     }
                 } catch (IOException e) {
                     plugin.getLogger().severe(e.getMessage());
@@ -288,7 +294,7 @@ public class TeamChestAPI {
         private EditTeamFile(){}
 
         private static String[] getTeams() {
-            new EditTeamFile().reloadFiles();
+            new EditTeamFile().loadTeams();
             return teamAndMemberCombination.keySet().toArray(new String[0]);
         }
 
@@ -304,7 +310,7 @@ public class TeamChestAPI {
         }
 
         private static String[] getMembersFromTeam(String teamName) {
-            new EditTeamFile().reloadFiles();
+            new EditTeamFile().loadTeams();
             return teamAndMemberCombination.get(teamName);
         }
 
@@ -314,7 +320,7 @@ public class TeamChestAPI {
         }
 
         private static String[] getInvitationsForTeam(String teamName) {
-            new EditTeamFile().reloadFiles();
+            new EditTeamFile().loadTeams();
             return teamAndInvitationCombination.get(teamName);
         }
 
@@ -331,40 +337,95 @@ public class TeamChestAPI {
             new EditTeamFile().writeTeamFile();
         }
 
-        private void reloadFiles() {
-            teamAndMemberCombination.clear();
-            JSONObject teams;
-            JSONArray memberArray;
-            try {
-                teams = new JSONObject(new EditTeamFile().readFile(file));
-                memberArray = (JSONArray) teams.get("teams");
-            } catch (Exception ignored) {
-                memberArray = new JSONArray();
-            }
-            JSONArray invitationMemberArray;
-            try {
-                teams = new JSONObject(new EditTeamFile().readFile(invitationFile));
-                invitationMemberArray = (JSONArray) teams.get("teams");
-            } catch (Exception ignored) {
-                invitationMemberArray = new JSONArray();
-            }
-            for (int i = 0; i < memberArray.length() || i < invitationMemberArray.length(); i++) {
-                if (i <= memberArray.length() - 1) {
-                    JSONObject jsonObject = memberArray.getJSONObject(i);
-                    String team = (String) jsonObject.keySet().toArray()[0];
-                    String[] members = ((JSONArray)jsonObject.get(team)).toList().toArray(new String[0]);
-                    teamAndMemberCombination.put(team, members);
-                }
-                if (i <= invitationMemberArray.length() - 1) {
-                    JSONObject jsonObject = invitationMemberArray.getJSONObject(i);
-                    String team = (String) jsonObject.keySet().toArray()[0];
-                    String[] members = ((JSONArray)jsonObject.get(team)).toList().toArray(new String[0]);
-                    teamAndInvitationCombination.put(team, members);
+        private static void setWorld(String team, String world) throws NullPointerException{
+            if (world == null) {
+                teamAndWorldCombination.remove(team);
+            } else {
+                if (teamAndWorldCombination.containsKey(team)) {
+                    teamAndWorldCombination.replace(team, world);
+                } else {
+                    teamAndWorldCombination.put(team, world);
                 }
             }
         }
 
-        private String readFile(File file) throws IOException {
+        private static String getWorld(String team) { // TODO: 10.03.2022 Do I REALLY need this?
+            new EditTeamFile().loadTeams();
+            return teamAndWorldCombination.get(team);
+        }
+
+        private static void setChestLocation(String team, Location location) throws NullPointerException{
+            if (location == null) {
+                teamAndInvitationCombination.remove(team);
+            } else {
+                if (teamAndChestCombination.containsKey(team)) {
+                    teamAndChestCombination.replace(team, location);
+                } else {
+                    teamAndChestCombination.put(team, location);
+                }
+            }
+        }
+
+        private static Location getChestLocation(String team) {
+            new EditTeamFile().loadTeams();
+            return teamAndChestCombination.get(team);
+        }
+
+        private static void setSignLocation(String team, Location location) throws NullPointerException{
+            if (location == null) {
+                teamAndSignCombination.remove(team);
+            } else {
+                if (teamAndSignCombination.containsKey(team)) {
+                    teamAndSignCombination.replace(team, location);
+                } else {
+                    teamAndSignCombination.put(team, location);
+                }
+            }
+        }
+
+        private static Location getSignLocation(String team) {
+            new EditTeamFile().loadTeams();
+            return teamAndSignCombination.get(team);
+        }
+
+        private void loadTeams() {
+            JSONArray allTeams;
+            try {
+                JSONObject teams = new JSONObject(new EditTeamFile().readFile());
+                allTeams = (JSONArray) teams.get("teams");
+
+                teamAndMemberCombination.clear();
+                teamAndInvitationCombination.clear();
+                teamAndChestCombination.clear();
+                teamAndSignCombination.clear();
+            } catch (Exception ignored) {
+                allTeams = new JSONArray();
+            }
+            for (int i = 0; i < allTeams.length(); i++) {
+                JSONObject jsonObject = allTeams.getJSONObject(i);
+                String teamName = (String) jsonObject.get("Name");
+                String[] members = ((JSONArray)jsonObject.get("Member")).toList().toArray(new String[0]);
+
+                if (!jsonObject.isNull("Invitation")) {
+                    String[] invitation = ((JSONArray)jsonObject.get("Invitation")).toList().toArray(new String[0]);
+
+                    teamAndInvitationCombination.put(teamName, invitation);
+                }
+
+                if (!jsonObject.isNull("World")) {
+                    String worldName = jsonObject.getString("World");
+                    int[] chestInts = ArrayUtils.toPrimitive(jsonObject.getJSONArray("ChestLocation").toList().toArray(new Integer[0]));
+                    int[] signInts = ArrayUtils.toPrimitive(jsonObject.getJSONArray("SignLocation").toList().toArray(new Integer[0]));
+
+                    teamAndWorldCombination.put(teamName, worldName);
+                    teamAndChestCombination.put(teamName, getIntsLocation(worldName, chestInts));
+                    teamAndSignCombination.put(teamName, getIntsLocation(worldName, signInts));
+                }
+                teamAndMemberCombination.put(teamName, members);
+            }
+        }
+
+        private String readFile() throws IOException {
             BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
             StringBuilder raw = new StringBuilder();
             String line;
@@ -375,24 +436,42 @@ public class TeamChestAPI {
         }
 
         private void writeTeamFile() throws IOException {
-            writeTeamFile(file, teamAndMemberCombination);
-            writeTeamFile(invitationFile, teamAndInvitationCombination);
+            String[] teams = teamAndMemberCombination.keySet().toArray(new String[0]);
+            JSONArray teamArray = new JSONArray();
+            for (String team : teams) {
+
+                String[] member = teamAndMemberCombination.get(team);
+                String[] memberInvitation = teamAndInvitationCombination.get(team);
+                JSONObject object = new JSONObject();
+                object.put("Name", team);
+                object.put("Member", member);
+                if (memberInvitation != null) {
+                    object.put("Invitation", memberInvitation);
+                }
+                if (teamAndWorldCombination.get(team) != null) {
+                    object.put("World", teamAndWorldCombination.get(team));
+                    object.put("ChestLocation", getLocationInts(teamAndChestCombination.get(team)));
+                    object.put("SignLocation", getLocationInts(teamAndChestCombination.get(team)));
+                }
+                teamArray.put(object);
+            }
+            JSONObject allTeamsObject = new JSONObject();
+            allTeamsObject.put("teams", teamArray);
+            Writer writer = new FileWriter(file);
+            writer.write(allTeamsObject.toString());
+            writer.close();
         }
 
-        private void writeTeamFile(File file, HashMap<String, String[]> hashMap) throws IOException {
-            String[] teams = hashMap.keySet().toArray(new String[0]);
-            JSONArray jsonArray = new JSONArray();
-            for (String team : teams) {
-                String[] member = hashMap.get(team);
-                JSONObject object = new JSONObject();
-                object.put(team, member);
-                jsonArray.put(object);
-            }
-            JSONObject allTeams = new JSONObject();
-            allTeams.put("teams", jsonArray);
-            Writer writer = new FileWriter(file);
-            writer.write(allTeams.toString());
-            writer.close();
+        private int[] getLocationInts(Location location) {
+            int x = location.getBlockX();
+            int y = location.getBlockY();
+            int z = location.getBlockZ();
+            return new int[]{x, y, z};
+        }
+
+        private Location getIntsLocation(String worldName, int[] coordination) {
+            // coordination array = 0:x , 1:y , 2:z
+            return plugin.getServer().getWorld(worldName).getBlockAt(coordination[0], coordination[1], coordination[2]).getLocation();
         }
     }
 }
