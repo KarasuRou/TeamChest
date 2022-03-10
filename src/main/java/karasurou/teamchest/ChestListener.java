@@ -16,7 +16,7 @@ import java.util.Arrays;
 
 public class ChestListener implements Listener {
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onSignWritten(SignChangeEvent event) {
         Player p = event.getPlayer();
         String message = "Lines: " + Arrays.toString(event.getLines())  + "\n" +
@@ -25,7 +25,7 @@ public class ChestListener implements Listener {
         sendMessage(p, message); // TODO: 10.03.2022 Check sign permission
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onProtectedBlockRemove(BlockBreakEvent event) {
         if (TeamChestAPI.isProtectedChest(event.getBlock())) {
             event.setCancelled(true);
@@ -37,14 +37,14 @@ public class ChestListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onProtectedBlockBurn(BlockBurnEvent event) {
         if (TeamChestAPI.isProtectedChest(event.getBlock()) || TeamChestAPI.isProtectionSign(event.getBlock())) {
             event.setCancelled(true);
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onTNTExplosion(EntityExplodeEvent event){
         event.blockList().removeIf(block -> TeamChestAPI.isProtectedChest(block) || TeamChestAPI.isProtectionSign(block));
     }
@@ -54,7 +54,7 @@ public class ChestListener implements Listener {
         event.blockList().removeIf(block -> TeamChestAPI.isProtectedChest(block) || TeamChestAPI.isProtectionSign(block));
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onChestOpen(InventoryOpenEvent event) {
         if (event.getInventory().getType().getDefaultTitle().equalsIgnoreCase("chest")) {
             Location location = event.getInventory().getLocation();
