@@ -39,6 +39,13 @@ public class TeamChestAPI {
         }
     }
 
+    public static boolean isProtectionSign(Block block) {
+        if (isSign(block)) {
+            return true; // TODO: 10.03.2022 CheckProtection
+        }
+        return false;
+    }
+
     public static boolean isChest(Block block){
         switch (block.getType()) {
             case CHEST:
@@ -54,6 +61,13 @@ public class TeamChestAPI {
             return false;
 
         return inventoryHolder instanceof Chest || inventoryHolder instanceof DoubleChest;
+    }
+
+    public static boolean isProtectedChest(Block block) {
+        if (isChest(block)) {
+            return true; // TODO: 10.03.2022 CheckProtection
+        }
+        return false;
     }
 
     public static HashMap<String, String[]> getAllTeamsAndMembers() {
@@ -243,6 +257,10 @@ public class TeamChestAPI {
             }
         }
         EditTeamFile.setInvitationsForTeam(teamName, afterMember);
+    }
+
+    public static boolean allowedToOpenChest(Block block, Player player) {
+        return true; // TODO: 10.03.2022 Check if user is allowed to open the chest
     }
 
     private static class EditTeamFile{
