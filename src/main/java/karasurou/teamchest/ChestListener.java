@@ -66,7 +66,7 @@ public class ChestListener implements Listener {
             if (TeamChestAPI.isProtectedChest(block)) {
                 if (!TeamChestAPI.allowedToOpenChest(block, player)) {
                     event.setCancelled(true);
-                    sendMessage(player, Config.getLanguage("no-chest-opening-permission")); // TODO: 10.03.2022 language
+                    sendMessage(player, Config.getLanguage("no-chest-opening-permission"));
                 }
             }
         }

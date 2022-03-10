@@ -21,7 +21,6 @@ team_1: "Team&6 [TEAM]&r (Eigentümer:&6 [OWNER]&r)"
 team_2_nomembers: "&r hat keine Mitglieder!"
 team_2_member: "&r hat folgende Mitglieder: "
 teamfilecreated: "Team-Datei wurde erstellt."
-teaminvitationfilecreated: "Team-Einladungsdatei wurde erstellt."
 team_created: "&b[TeamChest]&r Team&6 [TEAM]&r wurde erstellt!"
 team_deleted: "&b[TeamChest]&r Team&6 [TEAM]&r wurde gelöscht!"
 team_invite: "&b[TeamChest]&r Spieler&6 [PLAYER]&r wurde zum Team&6 [TEAM]&r eingeladen."
@@ -34,11 +33,14 @@ team_kicked: "&b[TeamChest]&r Du hast den Spieler&6 [PLAYER]&r vom Team&6 [TEAM]
 
 ########################################################################
 # Berechtigungen und Fehler
+teamfilecreated-error: "Team-Datei konnte nicht erstellt werden!"
 no-permission: "&b[TeamChest]&c Du hast keine Berechtigung, um dies zu tun."
+no-chest-opening-permission: "&b[TeamChest]&c Du hast keine Berechtigung, um die Kiste zu öffnen!"
 no-team: "&b[TeamChest]&c Es existiert kein Team mit diesem Namen!"
 team-exists: "&b[TeamChest]&c Es existiert ein Team mit diesem Namen!"
 no-teamowner: "&b[TeamChest]&c Du musst der Team eigentümer sein, um dies zu tun."
 no-player: "&b[TeamChest]&c Du musst ein Spieler sein, um dieses Kommando auszuführen!"
 no-success-error: "&b[TeamChest]&4 [ERROR]&c\nEs ist ein Fehler beim Ausführen dieses Kommandos aufgetreten!"
+startup-error: "Es wurde ein Fehler während des Starts festgestellt! Plugin wird deaktiviert..."
 #
 ########################################################################

@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +36,11 @@ public class TeamChest extends JavaPlugin {
         Config.loadConfig(this);
         TeamChestAPI.init(this);
         getServer().getPluginManager().registerEvents(new ChestListener(), this);
+
+        if (errorDetected()) {
+            plugin.getLogger().severe(Config.getLanguage("startup-error"));
+            plugin.getPluginLoader().disablePlugin(this);
+        }
     }
 
     @Override
@@ -213,5 +219,9 @@ public class TeamChest extends JavaPlugin {
             senderCommands.addAll(commands.subList(0, commands.size()));
         }
         return senderCommands;
+    }
+
+    private boolean errorDetected() {
+        return !new File(plugin.getDataFolder(), "teams.json").exists();
     }
 }

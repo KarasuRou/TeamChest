@@ -12,10 +12,7 @@ import org.json.*;
 
 import javax.annotation.Nullable;
 import java.io.*;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class TeamChestAPI {
 
@@ -283,7 +280,7 @@ public class TeamChestAPI {
                         if (file.createNewFile()) {
                             plugin.getLogger().info(Config.getLanguage("teamfilecreated"));
                         } else {
-                            plugin.getLogger().severe(Config.getLanguage("teamfilecreated-error")); // TODO: 10.03.2022 language
+                            plugin.getLogger().severe(Config.getLanguage("teamfilecreated-error"));
                         }
                     }
                 } catch (IOException e) {
