@@ -160,13 +160,28 @@ public class TeamChestAPI {
     public static boolean getTeamInvitations(String teamName, Player sender) {
         try {
             if (getMembersFromTeam(teamName)[0].equals(sender.getName())) {
-                String[] member = getInvitationsFromTeam(teamName);// TODO: 10.03.2022 Output
+                String[] member = getInvitationsFromTeam(teamName);
                 if (member == null) {
-                    sender.sendMessage(Config.getLanguage("no_invitations"));
+                    sender.sendMessage(Config.getLanguage("no_invitations")
+                            .replace("[TEAM]", teamName));
                 } else if (member.length == 1) {
-                    sender.sendMessage(Config.getLanguage("one_invitation"));
+                    sender.sendMessage(Config.getLanguage("one_invitation")
+                            .replace("[TEAM]",teamName)
+                            .replace("[PLAYER]",member[0]));
                 } else {
-                    sender.sendMessage(Config.getLanguage("multiple_invitations"));
+                    StringBuilder output = new StringBuilder(Config.getLanguage("multiple_invitations")
+                            .replace("[AMOUNT]", String.valueOf(member.length))
+                            .replace("[TEAM]", teamName));
+                    for (int i = 0; i < member.length; i++) {
+                        if (i == 0) {
+                            output.append(Config.getLanguage("invitation_1")
+                                    .replace("[PLAYER]",member[i]));
+                        } else {
+                            output.append(", ").append(Config.getLanguage("invitation_1")
+                                    .replace("[PLAYER]",member[i]));
+                        }
+                    }
+                    sender.sendMessage(output.toString());
                 }
             }
             return true;

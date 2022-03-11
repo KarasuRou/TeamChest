@@ -36,11 +36,11 @@ player_no_team: "&b[TeamChest]&r You are not in &c any&r team!"
 player_one_team: "&b[TeamChest]&r You are in one team:&6 [TEAM]&r with&6 [PLAYER]&r as the leader."
 player_multiple_team: "&b[TeamChest]&r You are in [AMOUNT] teams:"
 player_team_1: "-&6 [TEAM]&r with&6 [PLAYER]&r as the leader."
-no_invitations: "TODO" #TODO: LANGUAGE
-one_invitations: "TODO" #TODO: LANGUAGE
-multiple_invitations: "TODO" #TODO: LANGUAGE
-invitation_1: "TODO" #TODO: LANGUAGE
-no_team_storage: "&b[TeamChest]&r There is&c no Chest&r designated that you could open for Team&6 [TEAM]&r."
+no_invitations: "&b[TeamChest]&rThere are&c no&r invitations for&6 [TEAM]&r."
+one_invitations: "&b[TeamChest]&rThere is one invitation for the player&6 [PLAYER]&r at&6 [TEAM]&r."
+multiple_invitations: "&b[TeamChest]&rThere are [AMOUNT] invitations at&6 [TEAM]&r for the following players:\n"
+invitation_1: "&6[PLAYER]&r"
+no_team_storage: "&b[TeamChest]&r There is&c no Chest&r designated that you could open for team&6 [TEAM]&r."
 #
 ########################################################################
 
