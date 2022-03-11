@@ -453,7 +453,7 @@ public class TeamChestAPI {
     private static class EditTeamFile{
 
         private final static File file = new File(plugin.getDataFolder(),"teams.json");
-        private final static HashMap<String, String[]> teamAndMemberCombination = new HashMap<>();// TODO: 10.03.2022 Make Team model!
+        private final static HashMap<String, String[]> teamAndMemberCombination = new HashMap<>();
         private final static HashMap<String, String[]> teamAndInvitationCombination = new HashMap<>();
         private final static HashMap<String, String> teamAndWorldCombination = new HashMap<>();
         private final static HashMap<String, Location> teamAndChestCombination = new HashMap<>();
