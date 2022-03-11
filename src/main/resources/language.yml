@@ -36,11 +36,13 @@ player_no_team: "&b[TeamChest]&r You are not in &c any&r team!"
 player_one_team: "&b[TeamChest]&r You are in one team:&6 [TEAM]&r with&6 [PLAYER]&r as the leader."
 player_multiple_team: "&b[TeamChest]&r You are in [AMOUNT] teams:"
 player_team_1: "-&6 [TEAM]&r with&6 [PLAYER]&r as the leader."
-no_invitations: "&b[TeamChest]&rThere are&c no&r invitations for&6 [TEAM]&r."
-one_invitations: "&b[TeamChest]&rThere is one invitation for the player&6 [PLAYER]&r at&6 [TEAM]&r."
-multiple_invitations: "&b[TeamChest]&rThere are [AMOUNT] invitations at&6 [TEAM]&r for the following players:\n"
+no_invitations: "&b[TeamChest]&r There are&c no&r invitations for&6 [TEAM]&r."
+one_invitations: "&b[TeamChest]&r There is one invitation for the player&6 [PLAYER]&r at&6 [TEAM]&r."
+multiple_invitations: "&b[TeamChest]&r There are [AMOUNT] invitations at&6 [TEAM]&r for the following players:\n"
 invitation_1: "&6[PLAYER]&r"
 no_team_storage: "&b[TeamChest]&r There is&c no Chest&r designated that you could open for team&6 [TEAM]&r."
+chest-created: "&b[TeamChest]&r Chest was designated for&6 [TEAM]&r!"
+chest-removed: "&b[TeamChest]&r Chest was removed for&6 [TEAM]&r!"
 #
 ########################################################################
 
@@ -58,5 +60,6 @@ no-teamowner: "&b[TeamChest]&c You have to be the team leader to do that."
 no-player: "&b[TeamChest]&c You have to be a player to use this command!"
 no-success-error: "&b[TeamChest]&4 [ERROR]&c\nAn error occurred while executing the command!"
 startup-error: "An error occurred at the startup! Deactivating plugin..."
+sign-error: "&c[ERROR]"
 #
 ########################################################################
