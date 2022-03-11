@@ -133,13 +133,22 @@ public class TeamChestAPI {
 
     public static boolean getPlayerTeams(Player sender) {
         try {
-            String[] teams = searchForTeamsFromMember(sender.getName());// TODO: 10.03.2022 Output
+            String[] teams = searchForTeamsFromMember(sender.getName());
             if (teams.length == 0) {
                 sender.sendMessage(Config.getLanguage("player_no_team"));
             } else if (teams.length == 1) {
-                sender.sendMessage(Config.getLanguage("player_one_team"));
+                sender.sendMessage(Config.getLanguage("player_one_team")
+                        .replace("[TEAM]", teams[0])
+                        .replace("[PLAYER]", getMembersFromTeam(teams[0])[0]));
             } else {
-                sender.sendMessage(Config.getLanguage("player_multiple_team"));
+                StringBuilder output = new StringBuilder(Config.getLanguage("player_multiple_team")
+                        .replace("[AMOUNT]", String.valueOf(teams.length)));
+                for (String team : teams) {
+                    output.append("\n").append(Config.getLanguage("player_team_1")
+                            .replace("[TEAM]", team)
+                            .replace("[PLAYER]", getMembersFromTeam(team)[0]));
+                }
+                sender.sendMessage(output.toString());
             }
             return true;
         } catch (Exception e) {

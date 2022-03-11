@@ -7,10 +7,10 @@ invalid-command: "&b[TeamChest]&e Ungültiges Kommando erfasst. Hast du es richt
 no-commands-detected: "&b[TeamChest]&e Ungültiges Kommando erfasst. Meinst du eins der folgenden?"
 command_createteam: "createTeam [teamName] (Erstellt ein Team, mit dir als Eigentümer)"
 command_deleteteam: "deleteTeam [teamName] (Löscht ein Team, wenn du der Eigentümer bist)"
-command_getteams: "TODO" #TODO: LANGUAGE
+command_getteams: "getTeams (Zeigt alle Teams an, wo du Mitglied bist)"
 command_invitetoteam: "inviteToTeam [teamName] [player] (Läd ein Spieler zum Team ein)"
-command_getteaminvitations: "TODO" #TODO: LANGUAGE
-command_cancelteaminvitation: "TODO" #TODO: LANGUAGE
+command_getteaminvitations: "getTeamInvitations [teamName] (Zeigt alle Einladungen des Teams)"
+command_cancelteaminvitation: "cancelTeamInvitation [teamName] [player] (Widerruft die Einladung)"
 command_acceptteaminvitation: "acceptTeamInvitation [teamName] (Akzeptiert die Einladung)"
 command_denyteaminvitation: "denyTeamInvitation [teamName] (Lehnt die Einladung ab)"
 command_leaveteam: "leaveTeam [teamName] (Du verlässt das Team, solange du nicht der Eigentümer bist)"
@@ -32,10 +32,10 @@ team_denyinvite: "&b[TeamChest]&r Du hast die Einladung vom Team&6 [TEAM]&r abge
 team_cancelinvite: "&b[TeamChest]&r Du hast die Einladung von&6 [PLAYER]&r für das Team&6 [TEAM]&r zurückgezogen."
 team_leftteam: "&b[TeamChest]&r Du hast das Team&6 [TEAM]&r verlassen&r."
 team_kicked: "&b[TeamChest]&r Du hast den Spieler&6 [PLAYER]&r vom Team&6 [TEAM]&r entfernt."
-player_no_team: "TODO" #TODO: LANGUAGE
-player_one_team: "TODO" #TODO: LANGUAGE
-player_multiple_team: "TODO" #TODO: LANGUAGE
-player_team_1: "TODO" #TODO: LANGUAGE
+player_no_team: "&b[TeamChest]&r Du bist in&c keinem&r Team!"
+player_one_team: "&b[TeamChest]&r Du bist in einem Team:&6 [TEAM]&r mit&6 [PLAYER]&r als Leiter."
+player_multiple_team: "&b[TeamChest]&r Du bist in [AMOUNT] Teams:"
+player_team_1: "-&6 [TEAM]&r mit&6 [PLAYER]&r als Leiter."
 no_invitations: "TODO" #TODO: LANGUAGE
 one_invitations: "TODO" #TODO: LANGUAGE
 multiple_invitations: "TODO" #TODO: LANGUAGE
