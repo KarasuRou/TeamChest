@@ -2,6 +2,7 @@ package karasurou.teamchest;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,11 +17,33 @@ public class ChestListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onSignWritten(SignChangeEvent event) {
-//        Player p = event.getPlayer();
-//        String message = "Lines: " + Arrays.toString(event.getLines())  + "\n" +
-//                         "Block: " + event.getBlock() + "\n";
-//        event.getBlock().getLocation(); // TODO: 10.03.2022 Location of Sign
-//        sendMessage(p, message); // TODO: 10.03.2022 Check sign permission
+        String[] lines = event.getLines();
+        Player player = event.getPlayer();
+        if (Config.isSignLine(lines[0])) {
+            String teamName = lines[1];
+            Block sign = event.getBlock();
+            if (!TeamChestAPI.teamDontExists(teamName)) {
+                if (TeamChestAPI.isOwner(teamName, player.getName())) {
+                    Block chest = searchChestAtSign(sign);
+                    if (chest == null) {
+                        return;
+                    }
+                    TeamChestAPI.setSignAndChestForTeam(teamName, sign, chest);
+                    sendMessage(player, Config.getLanguage("chest-created")
+                            .replace("[TEAM]", teamName));
+                } else {
+                    sendMessage(player, Config.getLanguage("no-teamowner"));
+                    for (int i = 0; i <= 3; i++) {
+                        event.setLine(i, Config.getLanguage("sign-error"));
+                    }
+                }
+            } else {
+                sendMessage(player, Config.getLanguage("no-team"));
+                for (int i = 0; i <= 3; i++) {
+                    event.setLine(i, Config.getLanguage("sign-error"));
+                }
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -28,30 +51,19 @@ public class ChestListener implements Listener {
         if (TeamChestAPI.isProtectedChest(event.getBlock())) {
             event.setCancelled(true);
         } else if (TeamChestAPI.isProtectionSign(event.getBlock())) {
-            event.setCancelled(true); // TODO: 11.03.2022 finish it
             String[] lines = ((Sign) event.getBlock().getState()).getLines();
             Player player = event.getPlayer();
-            if (lines[0].equals(Config.getDefaultSignLine())) {
+            if (Config.isSignLine(lines[0])) {
                 String teamName = lines[1];
-                Block sign = event.getBlock();
-                if (!TeamChestAPI.teamDontExists(teamName)) {
-                    if (TeamChestAPI.isOwner(teamName, player.getName())) {
-                        Block chest = searchChestAtSign(sign);
-                        if (chest == null) {
-                            return;
-                        }
-                        TeamChestAPI.setSignAndChestForTeam(teamName, sign, chest);
-                    } else {
-                        sendMessage(player, Config.getLanguage("")); // TODO: 11.03.2022 language
-                    }
-                } else {
-                    sendMessage(player, Config.getLanguage("") // TODO: 11.03.2022 language
+                if (TeamChestAPI.getAllTeamsAndMembers().get(teamName)[0].equals(player.getName())) {
+                    TeamChestAPI.removeChestSignETC(teamName);
+                    sendMessage(player, Config.getLanguage("chest-removed")
                             .replace("[TEAM]", teamName));
+                } else {
+                    sendMessage(player, Config.getLanguage("no-teamowner"));
+                    event.setCancelled(true);
                 }
             }
-//            Player player = event.getPlayer();
-//            if () // TODO: 10.03.2022 Check if user is allowed to remove the sign
-//            sendMessage(player, Config.getLanguage("no-teamowner"));
         }
     }
 
@@ -105,8 +117,22 @@ public class ChestListener implements Listener {
     }
 
     private Block searchChestAtSign(Block sign) {
-//        sign.
+        Block[] blocks = getBlocksAroundIt(sign);
+        for (Block block : blocks) {
+            if (TeamChestAPI.isChest(block)) {
+                return block;
+            }
+        }
         return null;
+    }
+
+    private Block[] getBlocksAroundIt(Block block) {
+        Block[] blocks = new Block[4];
+        blocks[0] = block.getRelative(BlockFace.NORTH);
+        blocks[1] = block.getRelative(BlockFace.EAST);
+        blocks[2] = block.getRelative(BlockFace.SOUTH);
+        blocks[3] = block.getRelative(BlockFace.WEST);
+        return blocks;
     }
 
     private void sendMessage(Player player, String s) {

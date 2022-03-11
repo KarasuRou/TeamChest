@@ -336,6 +336,14 @@ public class TeamChestAPI {
         return EditTeamFile.getMembersFromTeam(teamName)[0].equals(player);
     }
 
+    public static void removeChestSignETC(String teamName) {
+        try {
+            removeSignAndChestFromTeam(teamName);
+        } catch (Exception e) {
+            plugin.getLogger().severe(e.getMessage());
+        }
+    }
+
     private static String[] getTeams() throws IOException {
         return EditTeamFile.getTeams();
     }
@@ -426,7 +434,10 @@ public class TeamChestAPI {
         String[] teams = EditTeamFile.getTeams();
         Location searchedLocation = chest.getLocation();
         for (String team : teams) {
-            Location givenLocation = EditTeamFile.getChestLocation(team);
+            Location givenLocation = getChestFromTeam(team);
+            if (givenLocation == null)
+                continue;
+
             if (givenLocation.getBlockX() == searchedLocation.getBlockX() &&
                     givenLocation.getBlockY() == searchedLocation.getBlockY() &&
                     givenLocation.getBlockZ() == searchedLocation.getBlockZ()) {
@@ -444,7 +455,11 @@ public class TeamChestAPI {
         String[] teams = EditTeamFile.getTeams();
         Location searchedLocation = sign.getLocation();
         for (String team : teams) {
-            Location givenLocation = EditTeamFile.getSignLocation(team);
+            Location givenLocation = getSignFromTeam(team);
+            if (givenLocation == null) {
+                continue;
+            }
+
             if (givenLocation.getBlockX() == searchedLocation.getBlockX() &&
                     givenLocation.getBlockY() == searchedLocation.getBlockY() &&
                     givenLocation.getBlockZ() == searchedLocation.getBlockZ()) {
@@ -470,6 +485,12 @@ public class TeamChestAPI {
         EditTeamFile.setSignLocation(teamName, sign.getLocation());
         EditTeamFile.setChestLocation(teamName, chest.getLocation());
         EditTeamFile.setWorld(teamName, chest.getWorld().getName());
+    }
+
+    private static void removeSignAndChestFromTeam(String teamName) throws Exception {
+        EditTeamFile.setSignLocation(teamName, null);
+        EditTeamFile.setChestLocation(teamName, null);
+        EditTeamFile.setWorld(teamName, null);
     }
 
     private static class EditTeamFile{
@@ -656,7 +677,7 @@ public class TeamChestAPI {
                 if (teamAndWorldCombination.get(team) != null) {
                     object.put("World", teamAndWorldCombination.get(team));
                     object.put("ChestLocation", getLocationInts(teamAndChestCombination.get(team)));
-                    object.put("SignLocation", getLocationInts(teamAndChestCombination.get(team)));
+                    object.put("SignLocation", getLocationInts(teamAndSignCombination.get(team)));
                 }
                 teamArray.put(object);
             }
