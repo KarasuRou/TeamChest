@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,11 +16,29 @@ import java.util.List;
 
 /**
  * <h3>MINECRAFT SERVER PLUGIN</h3>
- * This plugin will add a new feature ...<br/>
+ * This plugin will add a new feature where a team-lead can designate a chest and every team-member can use it.<br/>
  * <br/>
- * Permissions if needed:<br/>
- * teamchest.com - des ({@code command})<br/>
- * @author Rouven Tjalf Rosploch (KarasuRou)// TODO: 25.02.2022
+ * <em><u>Commands (Plugins):</u></em><br/>
+ * teamchest.debug:<br/>
+ * - debug<br/>
+ * - getAllTeams<br/>
+ * teamchest.command:<br/>
+ * - createTeam [teamName]<br/>
+ * - openChest [teamName]<br/>
+ * - deleteTeam [teamName]<br/>
+ * - getTeams<br/>
+ * - inviteToTeam [teamName] [player]<br/>
+ * - getTeamInvitations [teamName]<br/>
+ * - cancelTeamInvitation [teamName] [player]<br/>
+ * - acceptTeamInvitation [teamName]<br/>
+ * - denyTeamInvitation [teamName]<br/>
+ * - leaveTeam [teamName]<br/>
+ * - kickFromTeam [teamName] [player]<br/>
+ * <br/>
+ * <em><u>Permissions if needed:</u></em><br/>
+ * teamchest.debug - Admin commands<br/>
+ * teamchest.command - Team creation and chest usage<br/>
+ * @author Rouven Tjalf Rosploch (KarasuRou)
  * @version 1.0.0
  */
 public class TeamChest extends JavaPlugin {
@@ -34,6 +53,12 @@ public class TeamChest extends JavaPlugin {
         plugin = this;
         Config.loadConfig(this);
         TeamChestAPI.init(this);
+        getServer().getPluginManager().registerEvents(new ChestListener(), this);
+
+        if (errorDetected()) {
+            plugin.getLogger().severe(Config.getLanguage("startup-error"));
+            plugin.getPluginLoader().disablePlugin(this);
+        }
     }
 
     @Override
@@ -43,7 +68,7 @@ public class TeamChest extends JavaPlugin {
             if (args.length == 1) {
                 List<String> list = new ArrayList<>();
                 for (String s : senderCommands) {
-                    if (s.startsWith(args[0])) {
+                    if (s.toLowerCase().contains(args[0].toLowerCase())) {
                         list.add(s);
                     }
                 }
@@ -83,21 +108,21 @@ public class TeamChest extends JavaPlugin {
                             String[] teams = teamPlayerMap.keySet().toArray(new String[0]);
                             for (String team : teams) {
                                 String[] player = teamPlayerMap.get(team);
-                                String output = Config.getLanguage("team_1")
+                                StringBuilder output = new StringBuilder(Config.getLanguage("team_1")
                                         .replace("[TEAM]", team)
-                                        .replace("[OWNER]", player[0]);
+                                        .replace("[OWNER]", player[0]));
                                 if (player.length == 1) {
-                                    output += Config.getLanguage("team_2_nomembers");
+                                    output.append(Config.getLanguage("team_2_nomembers"));
                                 } else {
-                                    output += Config.getLanguage("team_2_members");
+                                    output.append(Config.getLanguage("team_2_members"));
                                     for (int i = 1; i < player.length; i++) {
-                                        output += player[i];
+                                        output.append(player[i]);
                                         if (i != player.length - 1) {
-                                            output += ", ";
+                                            output.append(", ");
                                         }
                                     }
                                 }
-                                sender.sendMessage(output);
+                                sender.sendMessage(output.toString());
                             }
                             break;
                         default:
@@ -116,7 +141,17 @@ public class TeamChest extends JavaPlugin {
                         sender.sendMessage(Config.getLanguage("no-player"));
                         return true;
                     }
-                    if (args.length == 2) {
+                    if(args.length == 1){
+                        switch (args[0]) {
+                            case "getTeams":
+                                success = TeamChestAPI.getPlayerTeams((Player) sender);
+                                break;
+                            default:
+                                Utilities.sendCommandHelp(args[0], sender, this);
+                                success = true;
+                                break;
+                        }
+                    } else if (args.length == 2) {
                         if (TeamChestAPI.teamDontExists(args[1]) && !args[0].equals("createTeam")) {
                             sender.sendMessage(Config.getLanguage("no-team"));
                             return true;
@@ -133,6 +168,9 @@ public class TeamChest extends JavaPlugin {
                             case "deleteTeam":
                                 success = TeamChestAPI.deleteTeam(args[1], (Player) sender);
                                 break;
+                            case "getTeamInvitations":
+                                success = TeamChestAPI.getTeamInvitations(args[1], (Player) sender);
+                                break;
                             case "acceptTeamInvitation":
                                 success = TeamChestAPI.acceptInvitation(args[1], (Player) sender);
                                 break;
@@ -141,6 +179,9 @@ public class TeamChest extends JavaPlugin {
                                 break;
                             case "leaveTeam":
                                 success = TeamChestAPI.leaveTeam(args[1], (Player) sender);
+                                break;
+                            case "openChest":
+                                success = TeamChestAPI.openChest(args[1], (Player) sender);
                                 break;
                             default:
                                 Utilities.sendCommandHelp(args[0], sender, this);
@@ -155,6 +196,9 @@ public class TeamChest extends JavaPlugin {
                         switch (args[0]) {
                             case "inviteToTeam":
                                 success = TeamChestAPI.inviteToTeam(args[1], args[2], (Player) sender);
+                                break;
+                            case "cancelTeamInvitation":
+                                success = TeamChestAPI.cancelTeamInvitation(args[1], args[2], (Player) sender);
                                 break;
                             case "kickFromTeam":
                                 success = TeamChestAPI.kickFromTeam(args[1], args[2], (Player) sender);
@@ -189,10 +233,14 @@ public class TeamChest extends JavaPlugin {
 
     private void fillAllCommands() {
         debugCommands.add("debug");
-        debugCommands.add("getAllTeams"); // TODO: 04.03.2022 Also for a single player (getMyTeams)
+        debugCommands.add("getAllTeams");
         commands.add("createTeam");
+        commands.add("openChest");
         commands.add("deleteTeam");
-        commands.add("inviteToTeam"); // TODO: 04.03.2022 Cancel Invitation (cancelTeamInvitation)
+        commands.add("getTeams");
+        commands.add("inviteToTeam");
+        commands.add("getTeamInvitations");
+        commands.add("cancelTeamInvitation");
         commands.add("acceptTeamInvitation");
         commands.add("denyTeamInvitation");
         commands.add("leaveTeam");
@@ -212,5 +260,9 @@ public class TeamChest extends JavaPlugin {
             senderCommands.addAll(commands.subList(0, commands.size()));
         }
         return senderCommands;
+    }
+
+    private boolean errorDetected() {
+        return !new File(plugin.getDataFolder(), "teams.json").exists();
     }
 }

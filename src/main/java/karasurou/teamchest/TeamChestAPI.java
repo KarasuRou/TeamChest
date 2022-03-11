@@ -1,13 +1,22 @@
 package karasurou.teamchest;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.Plugin;
 import org.json.*;
 
 import javax.annotation.Nullable;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class TeamChestAPI {
 
@@ -36,6 +45,14 @@ public class TeamChestAPI {
         }
     }
 
+    public static boolean isProtectionSign(Block block) {
+        if (isSign(block)) {
+            String team = getTeamFromSign(block);
+            return team != null;
+        }
+        return false;
+    }
+
     public static boolean isChest(Block block){
         switch (block.getType()) {
             case CHEST:
@@ -44,6 +61,21 @@ public class TeamChestAPI {
             default:
                 return false;
         }
+    }
+
+    public static boolean isChest(InventoryHolder inventoryHolder){
+        if (inventoryHolder == null)
+            return false;
+
+        return inventoryHolder instanceof Chest || inventoryHolder instanceof DoubleChest;
+    }
+
+    public static boolean isProtectedChest(Block block) {
+        if (isChest(block)) {
+            String team = getTeamFromChest(block);
+            return team != null;
+        }
+        return false;
     }
 
     public static HashMap<String, String[]> getAllTeamsAndMembers() {
@@ -99,11 +131,98 @@ public class TeamChestAPI {
         return false;
     }
 
+    public static boolean getPlayerTeams(Player sender) {
+        try {
+            String[] teams = searchForTeamsFromMember(sender.getName());
+            if (teams.length == 0) {
+                sender.sendMessage(Config.getLanguage("player_no_team"));
+            } else if (teams.length == 1) {
+                sender.sendMessage(Config.getLanguage("player_one_team")
+                        .replace("[TEAM]", teams[0])
+                        .replace("[PLAYER]", getMembersFromTeam(teams[0])[0]));
+            } else {
+                StringBuilder output = new StringBuilder(Config.getLanguage("player_multiple_team")
+                        .replace("[AMOUNT]", String.valueOf(teams.length)));
+                for (String team : teams) {
+                    output.append("\n").append(Config.getLanguage("player_team_1")
+                            .replace("[TEAM]", team)
+                            .replace("[PLAYER]", getMembersFromTeam(team)[0]));
+                }
+                sender.sendMessage(output.toString());
+            }
+            return true;
+        } catch (Exception e) {
+            plugin.getLogger().severe(e.getMessage());
+        }
+        return false;
+    }
+
+    public static boolean getTeamInvitations(String teamName, Player sender) {
+        try {
+            if (getMembersFromTeam(teamName)[0].equals(sender.getName())) {
+                String[] member = getInvitationsFromTeam(teamName);
+                if (member == null) {
+                    sender.sendMessage(Config.getLanguage("no_invitations")
+                            .replace("[TEAM]", teamName));
+                } else if (member.length == 1) {
+                    sender.sendMessage(Config.getLanguage("one_invitation")
+                            .replace("[TEAM]",teamName)
+                            .replace("[PLAYER]",member[0]));
+                } else {
+                    StringBuilder output = new StringBuilder(Config.getLanguage("multiple_invitations")
+                            .replace("[AMOUNT]", String.valueOf(member.length))
+                            .replace("[TEAM]", teamName));
+                    for (int i = 0; i < member.length; i++) {
+                        if (i == 0) {
+                            output.append(Config.getLanguage("invitation_1")
+                                    .replace("[PLAYER]",member[i]));
+                        } else {
+                            output.append(", ").append(Config.getLanguage("invitation_1")
+                                    .replace("[PLAYER]",member[i]));
+                        }
+                    }
+                    sender.sendMessage(output.toString());
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            plugin.getLogger().severe(e.getMessage());
+        }
+        return false;
+    }
+
     public static boolean acceptInvitation(String teamName, Player player) {
         try {
             removePlayerInvitation(teamName, player.getName());
             addPlayerToTeam(teamName, player.getName());
             player.sendMessage(Config.getLanguage("team_acceptinvite").replace("[TEAM]", teamName));
+            return true;
+        } catch (Exception e) {
+            plugin.getLogger().severe(e.getMessage());
+        }
+        return false;
+    }
+
+    public static boolean cancelTeamInvitation(String teamName, String playerName, Player owner) {
+        try {
+            if (getMembersFromTeam(teamName)[0].equals(owner.getName())) {
+                String[] invitations = getInvitationsFromTeam(teamName);
+                if (invitations == null) {
+                    owner.sendMessage(Config.getLanguage("no-invite")
+                            .replace("[TEAM]", teamName));
+                    return true;
+                }
+                if (Arrays.asList(invitations).contains(playerName)) {
+                    removePlayerInvitation(teamName, playerName);
+                    owner.sendMessage(Config.getLanguage("team_cancelinvite")
+                            .replace("[TEAM]", teamName)
+                            .replace("[PLAYER]", playerName));
+                } else {
+                    owner.sendMessage(Config.getLanguage("no-invite-member")
+                            .replace("[TEAM]", teamName)
+                            .replace("[PLAYER]", playerName));
+                }
+            }
             return true;
         } catch (Exception e) {
             plugin.getLogger().severe(e.getMessage());
@@ -172,6 +291,39 @@ public class TeamChestAPI {
         return false;
     }
 
+    public static boolean allowedToOpenChest(Block block, Player player) {
+        String team = getTeamFromChest(block);
+        if (team == null)
+            return false;
+
+        String[] members = getMembersFromTeam(team);
+        return Arrays.asList(members).contains(player.getName());
+    }
+
+    public static boolean openChest(String teamName, Player sender) {
+        try {
+            if (Arrays.asList(getMembersFromTeam(teamName)).contains(sender.getName())) {
+                if (!teamHaveStorage(teamName)) {
+                    sender.sendMessage(Config.getLanguage("no_team_storage")
+                            .replace("[TEAM]", teamName));
+                    return true;
+                }
+                Location location = getChestFromTeam(teamName);
+                int x = location.getBlockX();
+                int y = location.getBlockY();
+                int z = location.getBlockZ();
+                Inventory inventory = ((Chest) plugin.getServer().getWorld(getChestLocationFromTeam(teamName)).getBlockAt(x, y, z).getState()).getInventory();
+                sender.openInventory(inventory);
+            } else {
+                sender.sendMessage(Config.getLanguage("no-team-member").replace("[TEAM]", teamName));
+            }
+            return true;
+        } catch (Exception e) {
+            plugin.getLogger().severe(e.getMessage());
+        }
+        return false;
+    }
+
     private static String[] getTeams() throws IOException {
         return EditTeamFile.getTeams();
     }
@@ -188,6 +340,18 @@ public class TeamChestAPI {
         EditTeamFile.removeTeam(teamName);
     }
 
+    private static String[] searchForTeamsFromMember(String name) {
+        List<String> foundTeams = new ArrayList<>();
+        String[] teams = EditTeamFile.getTeams();
+        for (String team : teams) {
+            String[] members = EditTeamFile.getMembersFromTeam(team);
+            if (Arrays.asList(members).contains(name)) {
+                foundTeams.add(team);
+            }
+        }
+        return foundTeams.toArray(new String[0]);
+    }
+
     private static void addPlayerToTeam(String teamName, String member) throws IOException {
         String[] beforeMember = EditTeamFile.getMembersFromTeam(teamName);
         String[] afterMember = new String[beforeMember.length + 1];
@@ -200,10 +364,12 @@ public class TeamChestAPI {
         String[] beforeMember = EditTeamFile.getMembersFromTeam(teamName);
         String[] afterMember = new String[beforeMember.length - 1];
         int i = 0;
-        for (String member : beforeMember) {
-            if (!member.equals(player)) {
-                afterMember[i] = member;
-                i++;
+        if (Arrays.asList(beforeMember).contains(player)) {
+            for (String member : beforeMember) {
+                if (!member.equals(player)) {
+                    afterMember[i] = member;
+                    i++;
+                }
             }
         }
         EditTeamFile.setMembersFromTeam(teamName, afterMember);
@@ -226,31 +392,81 @@ public class TeamChestAPI {
         String[] beforeMember = EditTeamFile.getInvitationsForTeam(teamName);
         String[] afterMember = new String[beforeMember.length - 1];
         int i = 0;
-        for (String member : beforeMember) {
-            if (!member.equals(player)) {
-                afterMember[i] = member;
-                i++;
+        if (Arrays.asList(beforeMember).contains(player)) {
+            for (String member : beforeMember) {
+                if (!member.equals(player)) {
+                    afterMember[i] = member;
+                    i++;
+                }
+            }
+            if (afterMember.length == 0) {
+                afterMember = null;
+            }
+            EditTeamFile.setInvitationsForTeam(teamName, afterMember);
+        }
+    }
+
+    private static String[] getInvitationsFromTeam(String teamName) {
+        return EditTeamFile.getInvitationsForTeam(teamName);
+    }
+
+    private static String getTeamFromChest(Block chest) {
+        String[] teams = EditTeamFile.getTeams();
+        Location searchedLocation = chest.getLocation();
+        for (String team : teams) {
+            Location givenLocation = EditTeamFile.getChestLocation(team);
+            if (givenLocation.getBlockX() == searchedLocation.getBlockX() &&
+                    givenLocation.getBlockY() == searchedLocation.getBlockY() &&
+                    givenLocation.getBlockZ() == searchedLocation.getBlockZ()) {
+                return team;
             }
         }
-        EditTeamFile.setInvitationsForTeam(teamName, afterMember);
+        return null;
+    }
+
+    private static boolean teamHaveStorage(String teamName) {
+        return getChestFromTeam(teamName) != null;
+    }
+
+    private static String getTeamFromSign(Block sign) {
+        String[] teams = EditTeamFile.getTeams();
+        Location searchedLocation = sign.getLocation();
+        for (String team : teams) {
+            Location givenLocation = EditTeamFile.getSignLocation(team);
+            if (givenLocation.getBlockX() == searchedLocation.getBlockX() &&
+                    givenLocation.getBlockY() == searchedLocation.getBlockY() &&
+                    givenLocation.getBlockZ() == searchedLocation.getBlockZ()) {
+                return team;
+            }
+        }
+        return null;
+    }
+
+    private static Location getChestFromTeam(String teamName) {
+        return EditTeamFile.getChestLocation(teamName);
+    }
+
+    private static String getChestLocationFromTeam(String teamName) {
+        return EditTeamFile.getWorld(teamName);
     }
 
     private static class EditTeamFile{
 
         private final static File file = new File(plugin.getDataFolder(),"teams.json");
-        private final static File invitationFile = new File(plugin.getDataFolder(),"teamINV.json");
         private final static HashMap<String, String[]> teamAndMemberCombination = new HashMap<>();
         private final static HashMap<String, String[]> teamAndInvitationCombination = new HashMap<>();
+        private final static HashMap<String, String> teamAndWorldCombination = new HashMap<>();
+        private final static HashMap<String, Location> teamAndChestCombination = new HashMap<>();
+        private final static HashMap<String, Location> teamAndSignCombination = new HashMap<>();
 
         public static void init() {
                 try {
                     if (!file.exists()) {
-                        file.createNewFile();
-                        plugin.getLogger().info(Config.getLanguage("teamfilecreated"));
-                    }
-                    if (!invitationFile.exists()) {
-                        invitationFile.createNewFile();
-                        plugin.getLogger().info(Config.getLanguage("teaminvitationfilecreated"));
+                        if (file.createNewFile()) {
+                            plugin.getLogger().info(Config.getLanguage("teamfilecreated"));
+                        } else {
+                            plugin.getLogger().severe(Config.getLanguage("teamfilecreated-error"));
+                        }
                     }
                 } catch (IOException e) {
                     plugin.getLogger().severe(e.getMessage());
@@ -260,7 +476,7 @@ public class TeamChestAPI {
         private EditTeamFile(){}
 
         private static String[] getTeams() {
-            new EditTeamFile().reloadFiles();
+            new EditTeamFile().loadTeams();
             return teamAndMemberCombination.keySet().toArray(new String[0]);
         }
 
@@ -276,7 +492,7 @@ public class TeamChestAPI {
         }
 
         private static String[] getMembersFromTeam(String teamName) {
-            new EditTeamFile().reloadFiles();
+            new EditTeamFile().loadTeams();
             return teamAndMemberCombination.get(teamName);
         }
 
@@ -286,7 +502,7 @@ public class TeamChestAPI {
         }
 
         private static String[] getInvitationsForTeam(String teamName) {
-            new EditTeamFile().reloadFiles();
+            new EditTeamFile().loadTeams();
             return teamAndInvitationCombination.get(teamName);
         }
 
@@ -303,40 +519,95 @@ public class TeamChestAPI {
             new EditTeamFile().writeTeamFile();
         }
 
-        private void reloadFiles() {
-            teamAndMemberCombination.clear();
-            JSONObject teams;
-            JSONArray memberArray;
-            try {
-                teams = new JSONObject(new EditTeamFile().readFile(file));
-                memberArray = (JSONArray) teams.get("teams");
-            } catch (Exception ignored) {
-                memberArray = new JSONArray();
-            }
-            JSONArray invitationMemberArray;
-            try {
-                teams = new JSONObject(new EditTeamFile().readFile(invitationFile));
-                invitationMemberArray = (JSONArray) teams.get("teams");
-            } catch (Exception ignored) {
-                invitationMemberArray = new JSONArray();
-            }
-            for (int i = 0; i < memberArray.length() || i < invitationMemberArray.length(); i++) {
-                if (i <= memberArray.length() - 1) {
-                    JSONObject jsonObject = memberArray.getJSONObject(i);
-                    String team = (String) jsonObject.keySet().toArray()[0];
-                    String[] members = ((JSONArray)jsonObject.get(team)).toList().toArray(new String[0]);
-                    teamAndMemberCombination.put(team, members);
-                }
-                if (i <= invitationMemberArray.length() - 1) {
-                    JSONObject jsonObject = invitationMemberArray.getJSONObject(i);
-                    String team = (String) jsonObject.keySet().toArray()[0];
-                    String[] members = ((JSONArray)jsonObject.get(team)).toList().toArray(new String[0]);
-                    teamAndInvitationCombination.put(team, members);
+        private static void setWorld(String team, String world) throws NullPointerException{
+            if (world == null) {
+                teamAndWorldCombination.remove(team);
+            } else {
+                if (teamAndWorldCombination.containsKey(team)) {
+                    teamAndWorldCombination.replace(team, world);
+                } else {
+                    teamAndWorldCombination.put(team, world);
                 }
             }
         }
 
-        private String readFile(File file) throws IOException {
+        private static String getWorld(String team) {
+            new EditTeamFile().loadTeams();
+            return teamAndWorldCombination.get(team);
+        }
+
+        private static void setChestLocation(String team, Location location) throws NullPointerException{
+            if (location == null) {
+                teamAndInvitationCombination.remove(team);
+            } else {
+                if (teamAndChestCombination.containsKey(team)) {
+                    teamAndChestCombination.replace(team, location);
+                } else {
+                    teamAndChestCombination.put(team, location);
+                }
+            }
+        }
+
+        private static Location getChestLocation(String team) {
+            new EditTeamFile().loadTeams();
+            return teamAndChestCombination.get(team);
+        }
+
+        private static void setSignLocation(String team, Location location) throws NullPointerException{
+            if (location == null) {
+                teamAndSignCombination.remove(team);
+            } else {
+                if (teamAndSignCombination.containsKey(team)) {
+                    teamAndSignCombination.replace(team, location);
+                } else {
+                    teamAndSignCombination.put(team, location);
+                }
+            }
+        }
+
+        private static Location getSignLocation(String team) {
+            new EditTeamFile().loadTeams();
+            return teamAndSignCombination.get(team);
+        }
+
+        private void loadTeams() {
+            JSONArray allTeams;
+            try {
+                JSONObject teams = new JSONObject(new EditTeamFile().readFile());
+                allTeams = (JSONArray) teams.get("teams");
+
+                teamAndMemberCombination.clear();
+                teamAndInvitationCombination.clear();
+                teamAndChestCombination.clear();
+                teamAndSignCombination.clear();
+            } catch (Exception ignored) {
+                allTeams = new JSONArray();
+            }
+            for (int i = 0; i < allTeams.length(); i++) {
+                JSONObject jsonObject = allTeams.getJSONObject(i);
+                String teamName = (String) jsonObject.get("Name");
+                String[] members = ((JSONArray)jsonObject.get("Member")).toList().toArray(new String[0]);
+
+                if (!jsonObject.isNull("Invitation")) {
+                    String[] invitation = ((JSONArray)jsonObject.get("Invitation")).toList().toArray(new String[0]);
+
+                    teamAndInvitationCombination.put(teamName, invitation);
+                }
+
+                if (!jsonObject.isNull("World")) {
+                    String worldName = jsonObject.getString("World");
+                    int[] chestInts = ArrayUtils.toPrimitive(jsonObject.getJSONArray("ChestLocation").toList().toArray(new Integer[0]));
+                    int[] signInts = ArrayUtils.toPrimitive(jsonObject.getJSONArray("SignLocation").toList().toArray(new Integer[0]));
+
+                    teamAndWorldCombination.put(teamName, worldName);
+                    teamAndChestCombination.put(teamName, getIntsLocation(worldName, chestInts));
+                    teamAndSignCombination.put(teamName, getIntsLocation(worldName, signInts));
+                }
+                teamAndMemberCombination.put(teamName, members);
+            }
+        }
+
+        private String readFile() throws IOException {
             BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
             StringBuilder raw = new StringBuilder();
             String line;
@@ -347,24 +618,42 @@ public class TeamChestAPI {
         }
 
         private void writeTeamFile() throws IOException {
-            writeTeamFile(file, teamAndMemberCombination);
-            writeTeamFile(invitationFile, teamAndInvitationCombination);
+            String[] teams = teamAndMemberCombination.keySet().toArray(new String[0]);
+            JSONArray teamArray = new JSONArray();
+            for (String team : teams) {
+
+                String[] member = teamAndMemberCombination.get(team);
+                String[] memberInvitation = teamAndInvitationCombination.get(team);
+                JSONObject object = new JSONObject();
+                object.put("Name", team);
+                object.put("Member", member);
+                if (memberInvitation != null) {
+                    object.put("Invitation", memberInvitation);
+                }
+                if (teamAndWorldCombination.get(team) != null) {
+                    object.put("World", teamAndWorldCombination.get(team));
+                    object.put("ChestLocation", getLocationInts(teamAndChestCombination.get(team)));
+                    object.put("SignLocation", getLocationInts(teamAndChestCombination.get(team)));
+                }
+                teamArray.put(object);
+            }
+            JSONObject allTeamsObject = new JSONObject();
+            allTeamsObject.put("teams", teamArray);
+            Writer writer = new FileWriter(file);
+            writer.write(allTeamsObject.toString());
+            writer.close();
         }
 
-        private void writeTeamFile(File file, HashMap<String, String[]> hashMap) throws IOException {
-            String[] teams = hashMap.keySet().toArray(new String[0]);
-            JSONArray jsonArray = new JSONArray();
-            for (String team : teams) {
-                String[] member = hashMap.get(team);
-                JSONObject object = new JSONObject();
-                object.put(team, member);
-                jsonArray.put(object);
-            }
-            JSONObject allTeams = new JSONObject();
-            allTeams.put("teams", jsonArray);
-            Writer writer = new FileWriter(file);
-            writer.write(allTeams.toString());
-            writer.close();
+        private int[] getLocationInts(Location location) {
+            int x = location.getBlockX();
+            int y = location.getBlockY();
+            int z = location.getBlockZ();
+            return new int[]{x, y, z};
+        }
+
+        private Location getIntsLocation(String worldName, int[] coordination) {
+            // coordination array = 0:x , 1:y , 2:z
+            return plugin.getServer().getWorld(worldName).getBlockAt(coordination[0], coordination[1], coordination[2]).getLocation();
         }
     }
 }

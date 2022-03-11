@@ -1,7 +1,8 @@
 name: TeamChest
-version: 0.2.0
+version: 0.8.0
 main: karasurou.teamchest.TeamChest
 author: Rouven Tjalf Rosploch (KarasuRou)
+website: https://github.com/KarasuRou/TeamChest
 description: This plugin can create teams, which leader can designate a chest, that every team-member can use.
 api-version: 1.18
 libraries:
