@@ -324,6 +324,18 @@ public class TeamChestAPI {
         return false;
     }
 
+    public static void setSignAndChestForTeam(String teamName, Block sign, Block chest) {
+        try {
+            setSignAndChestFromTeam(teamName, sign, chest);
+        } catch (Exception e) {
+            plugin.getLogger().severe(e.getMessage());
+        }
+    }
+
+    public static boolean isOwner(String teamName, String player) {
+        return EditTeamFile.getMembersFromTeam(teamName)[0].equals(player);
+    }
+
     private static String[] getTeams() throws IOException {
         return EditTeamFile.getTeams();
     }
@@ -450,6 +462,16 @@ public class TeamChestAPI {
         return EditTeamFile.getWorld(teamName);
     }
 
+    private static Location getSignFromTeam(String teamName) {
+        return EditTeamFile.getSignLocation(teamName);
+    }
+
+    private static void setSignAndChestFromTeam(String teamName, Block sign, Block chest) throws Exception {
+        EditTeamFile.setSignLocation(teamName, sign.getLocation());
+        EditTeamFile.setChestLocation(teamName, chest.getLocation());
+        EditTeamFile.setWorld(teamName, chest.getWorld().getName());
+    }
+
     private static class EditTeamFile{
 
         private final static File file = new File(plugin.getDataFolder(),"teams.json");
@@ -519,7 +541,7 @@ public class TeamChestAPI {
             new EditTeamFile().writeTeamFile();
         }
 
-        private static void setWorld(String team, String world) throws NullPointerException{
+        private static void setWorld(String team, String world) throws Exception{
             if (world == null) {
                 teamAndWorldCombination.remove(team);
             } else {
@@ -529,6 +551,7 @@ public class TeamChestAPI {
                     teamAndWorldCombination.put(team, world);
                 }
             }
+            new EditTeamFile().writeTeamFile();
         }
 
         private static String getWorld(String team) {

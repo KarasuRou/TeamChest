@@ -2,6 +2,7 @@ package karasurou.teamchest;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -27,8 +28,27 @@ public class ChestListener implements Listener {
         if (TeamChestAPI.isProtectedChest(event.getBlock())) {
             event.setCancelled(true);
         } else if (TeamChestAPI.isProtectionSign(event.getBlock())) {
-            event.setCancelled(true);
-//            sendMessage(event.getPlayer(), Arrays.toString(((Sign) event.getBlock().getState()).getLines())); // TODO: 10.03.2022 Check sign permission
+            event.setCancelled(true); // TODO: 11.03.2022 finish it
+            String[] lines = ((Sign) event.getBlock().getState()).getLines();
+            Player player = event.getPlayer();
+            if (lines[0].equals(Config.getDefaultSignLine())) {
+                String teamName = lines[1];
+                Block sign = event.getBlock();
+                if (!TeamChestAPI.teamDontExists(teamName)) {
+                    if (TeamChestAPI.isOwner(teamName, player.getName())) {
+                        Block chest = searchChestAtSign(sign);
+                        if (chest == null) {
+                            return;
+                        }
+                        TeamChestAPI.setSignAndChestForTeam(teamName, sign, chest);
+                    } else {
+                        sendMessage(player, Config.getLanguage("")); // TODO: 11.03.2022 language
+                    }
+                } else {
+                    sendMessage(player, Config.getLanguage("") // TODO: 11.03.2022 language
+                            .replace("[TEAM]", teamName));
+                }
+            }
 //            Player player = event.getPlayer();
 //            if () // TODO: 10.03.2022 Check if user is allowed to remove the sign
 //            sendMessage(player, Config.getLanguage("no-teamowner"));
@@ -82,6 +102,11 @@ public class ChestListener implements Listener {
                 event.setCancelled(true);
             }
         }
+    }
+
+    private Block searchChestAtSign(Block sign) {
+//        sign.
+        return null;
     }
 
     private void sendMessage(Player player, String s) {
