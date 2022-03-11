@@ -7,7 +7,10 @@ invalid-command: "&b[TeamChest]&e Ungültiges Kommando erfasst. Hast du es richt
 no-commands-detected: "&b[TeamChest]&e Ungültiges Kommando erfasst. Meinst du eins der folgenden?"
 command_createteam: "createTeam [teamName] (Erstellt ein Team, mit dir als Eigentümer)"
 command_deleteteam: "deleteTeam [teamName] (Löscht ein Team, wenn du der Eigentümer bist)"
+command_getteams: "TODO" #TODO: LANGUAGE
 command_invitetoteam: "inviteToTeam [teamName] [player] (Läd ein Spieler zum Team ein)"
+command_getteaminvitations: "TODO" #TODO: LANGUAGE
+command_cancelteaminvitation: "TODO" #TODO: LANGUAGE
 command_acceptteaminvitation: "acceptTeamInvitation [teamName] (Akzeptiert die Einladung)"
 command_denyteaminvitation: "denyTeamInvitation [teamName] (Lehnt die Einladung ab)"
 command_leaveteam: "leaveTeam [teamName] (Du verlässt das Team, solange du nicht der Eigentümer bist)"
@@ -26,8 +29,18 @@ team_deleted: "&b[TeamChest]&r Team&6 [TEAM]&r wurde gelöscht!"
 team_invite: "&b[TeamChest]&r Spieler&6 [PLAYER]&r wurde zum Team&6 [TEAM]&r eingeladen."
 team_acceptinvite: "&b[TeamChest]&r Du bist nun ein Mitglied vom Team&6 [TEAM]&r."
 team_denyinvite: "&b[TeamChest]&r Du hast die Einladung vom Team&6 [TEAM]&r abgelehnt."
+team_cancelinvite: "&b[TeamChest]&r Du hast die Einladung von&6 [PLAYER]&r für das Team&6 [TEAM]&r zurückgezogen."
 team_leftteam: "&b[TeamChest]&r Du hast das Team&6 [TEAM]&r verlassen&r."
 team_kicked: "&b[TeamChest]&r Du hast den Spieler&6 [PLAYER]&r vom Team&6 [TEAM]&r entfernt."
+player_no_team: "TODO" #TODO: LANGUAGE
+player_one_team: "TODO" #TODO: LANGUAGE
+player_multiple_team: "TODO" #TODO: LANGUAGE
+player_team_1: "TODO" #TODO: LANGUAGE
+no_invitations: "TODO" #TODO: LANGUAGE
+one_invitations: "TODO" #TODO: LANGUAGE
+multiple_invitations: "TODO" #TODO: LANGUAGE
+invitation_1: "TODO" #TODO: LANGUAGE
+no_team_storage: "&b[TeamChest]&r Es existiert&c keine Kiste&r für das Team&6 [TEAM]&r, welche du öffnen könntest."
 #
 ########################################################################
 
@@ -37,6 +50,9 @@ teamfilecreated-error: "Team-Datei konnte nicht erstellt werden!"
 no-permission: "&b[TeamChest]&c Du hast keine Berechtigung, um dies zu tun."
 no-chest-opening-permission: "&b[TeamChest]&c Du hast keine Berechtigung, um die Kiste zu öffnen!"
 no-team: "&b[TeamChest]&c Es existiert kein Team mit diesem Namen!"
+no-team-member: "&b[TeamChest]&c Du musst dafür ein Mitglied des Teams&6 [TEAM]&r sein!"
+no-invite: "&b[TeamChest]&c Es existiert keine Einladung für das Team&6 [TEAM]&c!"
+no-invite-member: "&b[TeamChest]&c Es existiert keine Einladung für&6 [PLAYER]&c bei&6 [TEAM]&c!"
 team-exists: "&b[TeamChest]&c Es existiert ein Team mit diesem Namen!"
 no-teamowner: "&b[TeamChest]&c Du musst der Team eigentümer sein, um dies zu tun."
 no-player: "&b[TeamChest]&c Du musst ein Spieler sein, um dieses Kommando auszuführen!"

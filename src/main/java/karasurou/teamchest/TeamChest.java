@@ -50,7 +50,7 @@ public class TeamChest extends JavaPlugin {
             if (args.length == 1) {
                 List<String> list = new ArrayList<>();
                 for (String s : senderCommands) {
-                    if (s.startsWith(args[0])) {
+                    if (s.toLowerCase().contains(args[0].toLowerCase())) {
                         list.add(s);
                     }
                 }
@@ -123,7 +123,17 @@ public class TeamChest extends JavaPlugin {
                         sender.sendMessage(Config.getLanguage("no-player"));
                         return true;
                     }
-                    if (args.length == 2) {
+                    if(args.length == 1){
+                        switch (args[0]) {
+                            case "getTeams":
+                                success = TeamChestAPI.getPlayerTeams((Player) sender);
+                                break;
+                            default:
+                                Utilities.sendCommandHelp(args[0], sender, this);
+                                success = true;
+                                break;
+                        }
+                    } else if (args.length == 2) {
                         if (TeamChestAPI.teamDontExists(args[1]) && !args[0].equals("createTeam")) {
                             sender.sendMessage(Config.getLanguage("no-team"));
                             return true;
@@ -140,6 +150,9 @@ public class TeamChest extends JavaPlugin {
                             case "deleteTeam":
                                 success = TeamChestAPI.deleteTeam(args[1], (Player) sender);
                                 break;
+                            case "getTeamInvitations":
+                                success = TeamChestAPI.getTeamInvitations(args[1], (Player) sender);
+                                break;
                             case "acceptTeamInvitation":
                                 success = TeamChestAPI.acceptInvitation(args[1], (Player) sender);
                                 break;
@@ -148,6 +161,9 @@ public class TeamChest extends JavaPlugin {
                                 break;
                             case "leaveTeam":
                                 success = TeamChestAPI.leaveTeam(args[1], (Player) sender);
+                                break;
+                            case "openChest":
+                                success = TeamChestAPI.openChest(args[1], (Player) sender);
                                 break;
                             default:
                                 Utilities.sendCommandHelp(args[0], sender, this);
@@ -162,6 +178,9 @@ public class TeamChest extends JavaPlugin {
                         switch (args[0]) {
                             case "inviteToTeam":
                                 success = TeamChestAPI.inviteToTeam(args[1], args[2], (Player) sender);
+                                break;
+                            case "cancelTeamInvitation":
+                                success = TeamChestAPI.cancelTeamInvitation(args[1], args[2], (Player) sender);
                                 break;
                             case "kickFromTeam":
                                 success = TeamChestAPI.kickFromTeam(args[1], args[2], (Player) sender);
@@ -196,10 +215,14 @@ public class TeamChest extends JavaPlugin {
 
     private void fillAllCommands() {
         debugCommands.add("debug");
-        debugCommands.add("getAllTeams"); // TODO: 04.03.2022 Also for a single player (getMyTeams)
+        debugCommands.add("getAllTeams");
         commands.add("createTeam");
+        commands.add("openChest");
         commands.add("deleteTeam");
-        commands.add("inviteToTeam"); // TODO: 04.03.2022 Cancel Invitation (cancelTeamInvitation)
+        commands.add("getTeams");
+        commands.add("inviteToTeam");
+        commands.add("getTeamInvitations");
+        commands.add("cancelTeamInvitation");
         commands.add("acceptTeamInvitation");
         commands.add("denyTeamInvitation");
         commands.add("leaveTeam");

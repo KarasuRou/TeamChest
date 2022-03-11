@@ -6,13 +6,17 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.Plugin;
 import org.json.*;
 
 import javax.annotation.Nullable;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class TeamChestAPI {
 
@@ -43,7 +47,8 @@ public class TeamChestAPI {
 
     public static boolean isProtectionSign(Block block) {
         if (isSign(block)) {
-            return true; // TODO: 10.03.2022 CheckProtection
+            String team = getTeamFromSign(block);
+            return team != null;
         }
         return false;
     }
@@ -67,7 +72,8 @@ public class TeamChestAPI {
 
     public static boolean isProtectedChest(Block block) {
         if (isChest(block)) {
-            return true; // TODO: 10.03.2022 CheckProtection
+            String team = getTeamFromChest(block);
+            return team != null;
         }
         return false;
     }
@@ -125,11 +131,74 @@ public class TeamChestAPI {
         return false;
     }
 
+    public static boolean getPlayerTeams(Player sender) {
+        try {
+            String[] teams = searchForTeamsFromMember(sender.getName());// TODO: 10.03.2022 Output
+            if (teams.length == 0) {
+                sender.sendMessage(Config.getLanguage("player_no_team"));
+            } else if (teams.length == 1) {
+                sender.sendMessage(Config.getLanguage("player_one_team"));
+            } else {
+                sender.sendMessage(Config.getLanguage("player_multiple_team"));
+            }
+            return true;
+        } catch (Exception e) {
+            plugin.getLogger().severe(e.getMessage());
+        }
+        return false;
+    }
+
+    public static boolean getTeamInvitations(String teamName, Player sender) {
+        try {
+            if (getMembersFromTeam(teamName)[0].equals(sender.getName())) {
+                String[] member = getInvitationsFromTeam(teamName);// TODO: 10.03.2022 Output
+                if (member == null) {
+                    sender.sendMessage(Config.getLanguage("no_invitations"));
+                } else if (member.length == 1) {
+                    sender.sendMessage(Config.getLanguage("one_invitation"));
+                } else {
+                    sender.sendMessage(Config.getLanguage("multiple_invitations"));
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            plugin.getLogger().severe(e.getMessage());
+        }
+        return false;
+    }
+
     public static boolean acceptInvitation(String teamName, Player player) {
         try {
             removePlayerInvitation(teamName, player.getName());
             addPlayerToTeam(teamName, player.getName());
             player.sendMessage(Config.getLanguage("team_acceptinvite").replace("[TEAM]", teamName));
+            return true;
+        } catch (Exception e) {
+            plugin.getLogger().severe(e.getMessage());
+        }
+        return false;
+    }
+
+    public static boolean cancelTeamInvitation(String teamName, String playerName, Player owner) {
+        try {
+            if (getMembersFromTeam(teamName)[0].equals(owner.getName())) {
+                String[] invitations = getInvitationsFromTeam(teamName);
+                if (invitations == null) {
+                    owner.sendMessage(Config.getLanguage("no-invite")
+                            .replace("[TEAM]", teamName));
+                    return true;
+                }
+                if (Arrays.asList(invitations).contains(playerName)) {
+                    removePlayerInvitation(teamName, playerName);
+                    owner.sendMessage(Config.getLanguage("team_cancelinvite")
+                            .replace("[TEAM]", teamName)
+                            .replace("[PLAYER]", playerName));
+                } else {
+                    owner.sendMessage(Config.getLanguage("no-invite-member")
+                            .replace("[TEAM]", teamName)
+                            .replace("[PLAYER]", playerName));
+                }
+            }
             return true;
         } catch (Exception e) {
             plugin.getLogger().severe(e.getMessage());
@@ -198,6 +267,39 @@ public class TeamChestAPI {
         return false;
     }
 
+    public static boolean allowedToOpenChest(Block block, Player player) {
+        String team = getTeamFromChest(block);
+        if (team == null)
+            return false;
+
+        String[] members = getMembersFromTeam(team);
+        return Arrays.asList(members).contains(player.getName());
+    }
+
+    public static boolean openChest(String teamName, Player sender) {
+        try {
+            if (Arrays.asList(getMembersFromTeam(teamName)).contains(sender.getName())) {
+                if (!teamHaveStorage(teamName)) {
+                    sender.sendMessage(Config.getLanguage("no_team_storage")
+                            .replace("[TEAM]", teamName));
+                    return true;
+                }
+                Location location = getChestFromTeam(teamName);
+                int x = location.getBlockX();
+                int y = location.getBlockY();
+                int z = location.getBlockZ();
+                Inventory inventory = ((Chest) plugin.getServer().getWorld(getChestLocationFromTeam(teamName)).getBlockAt(x, y, z).getState()).getInventory();
+                sender.openInventory(inventory);
+            } else {
+                sender.sendMessage(Config.getLanguage("no-team-member").replace("[TEAM]", teamName));
+            }
+            return true;
+        } catch (Exception e) {
+            plugin.getLogger().severe(e.getMessage());
+        }
+        return false;
+    }
+
     private static String[] getTeams() throws IOException {
         return EditTeamFile.getTeams();
     }
@@ -214,6 +316,18 @@ public class TeamChestAPI {
         EditTeamFile.removeTeam(teamName);
     }
 
+    private static String[] searchForTeamsFromMember(String name) {
+        List<String> foundTeams = new ArrayList<>();
+        String[] teams = EditTeamFile.getTeams();
+        for (String team : teams) {
+            String[] members = EditTeamFile.getMembersFromTeam(team);
+            if (Arrays.asList(members).contains(name)) {
+                foundTeams.add(team);
+            }
+        }
+        return foundTeams.toArray(new String[0]);
+    }
+
     private static void addPlayerToTeam(String teamName, String member) throws IOException {
         String[] beforeMember = EditTeamFile.getMembersFromTeam(teamName);
         String[] afterMember = new String[beforeMember.length + 1];
@@ -226,10 +340,12 @@ public class TeamChestAPI {
         String[] beforeMember = EditTeamFile.getMembersFromTeam(teamName);
         String[] afterMember = new String[beforeMember.length - 1];
         int i = 0;
-        for (String member : beforeMember) {
-            if (!member.equals(player)) {
-                afterMember[i] = member;
-                i++;
+        if (Arrays.asList(beforeMember).contains(player)) {
+            for (String member : beforeMember) {
+                if (!member.equals(player)) {
+                    afterMember[i] = member;
+                    i++;
+                }
             }
         }
         EditTeamFile.setMembersFromTeam(teamName, afterMember);
@@ -252,23 +368,68 @@ public class TeamChestAPI {
         String[] beforeMember = EditTeamFile.getInvitationsForTeam(teamName);
         String[] afterMember = new String[beforeMember.length - 1];
         int i = 0;
-        for (String member : beforeMember) {
-            if (!member.equals(player)) {
-                afterMember[i] = member;
-                i++;
+        if (Arrays.asList(beforeMember).contains(player)) {
+            for (String member : beforeMember) {
+                if (!member.equals(player)) {
+                    afterMember[i] = member;
+                    i++;
+                }
             }
+            if (afterMember.length == 0) {
+                afterMember = null;
+            }
+            EditTeamFile.setInvitationsForTeam(teamName, afterMember);
         }
-        EditTeamFile.setInvitationsForTeam(teamName, afterMember);
     }
 
-    public static boolean allowedToOpenChest(Block block, Player player) {
-        return true; // TODO: 10.03.2022 Check if user is allowed to open the chest
+    private static String[] getInvitationsFromTeam(String teamName) {
+        return EditTeamFile.getInvitationsForTeam(teamName);
+    }
+
+    private static String getTeamFromChest(Block chest) {
+        String[] teams = EditTeamFile.getTeams();
+        Location searchedLocation = chest.getLocation();
+        for (String team : teams) {
+            Location givenLocation = EditTeamFile.getChestLocation(team);
+            if (givenLocation.getBlockX() == searchedLocation.getBlockX() &&
+                    givenLocation.getBlockY() == searchedLocation.getBlockY() &&
+                    givenLocation.getBlockZ() == searchedLocation.getBlockZ()) {
+                return team;
+            }
+        }
+        return null;
+    }
+
+    private static boolean teamHaveStorage(String teamName) {
+        return getChestFromTeam(teamName) != null;
+    }
+
+    private static String getTeamFromSign(Block sign) {
+        String[] teams = EditTeamFile.getTeams();
+        Location searchedLocation = sign.getLocation();
+        for (String team : teams) {
+            Location givenLocation = EditTeamFile.getSignLocation(team);
+            if (givenLocation.getBlockX() == searchedLocation.getBlockX() &&
+                    givenLocation.getBlockY() == searchedLocation.getBlockY() &&
+                    givenLocation.getBlockZ() == searchedLocation.getBlockZ()) {
+                return team;
+            }
+        }
+        return null;
+    }
+
+    private static Location getChestFromTeam(String teamName) {
+        return EditTeamFile.getChestLocation(teamName);
+    }
+
+    private static String getChestLocationFromTeam(String teamName) {
+        return EditTeamFile.getWorld(teamName);
     }
 
     private static class EditTeamFile{
 
         private final static File file = new File(plugin.getDataFolder(),"teams.json");
-        private final static HashMap<String, String[]> teamAndMemberCombination = new HashMap<>();
+        private final static HashMap<String, String[]> teamAndMemberCombination = new HashMap<>();// TODO: 10.03.2022 Make Team model!
         private final static HashMap<String, String[]> teamAndInvitationCombination = new HashMap<>();
         private final static HashMap<String, String> teamAndWorldCombination = new HashMap<>();
         private final static HashMap<String, Location> teamAndChestCombination = new HashMap<>();
@@ -346,7 +507,7 @@ public class TeamChestAPI {
             }
         }
 
-        private static String getWorld(String team) { // TODO: 10.03.2022 Do I REALLY need this?
+        private static String getWorld(String team) {
             new EditTeamFile().loadTeams();
             return teamAndWorldCombination.get(team);
         }
