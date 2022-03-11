@@ -16,11 +16,29 @@ import java.util.List;
 
 /**
  * <h3>MINECRAFT SERVER PLUGIN</h3>
- * This plugin will add a new feature ...<br/>
+ * This plugin will add a new feature where a team-lead can designate a chest and every team-member can use it.<br/>
  * <br/>
- * Permissions if needed:<br/>
- * teamchest.com - des ({@code command})<br/>
- * @author Rouven Tjalf Rosploch (KarasuRou)// TODO: 25.02.2022
+ * <em><u>Commands (Plugins):</u></em><br/>
+ * teamchest.debug:<br/>
+ * - debug<br/>
+ * - getAllTeams<br/>
+ * teamchest.command:<br/>
+ * - createTeam [teamName]<br/>
+ * - openChest [teamName]<br/>
+ * - deleteTeam [teamName]<br/>
+ * - getTeams<br/>
+ * - inviteToTeam [teamName] [player]<br/>
+ * - getTeamInvitations [teamName]<br/>
+ * - cancelTeamInvitation [teamName] [player]<br/>
+ * - acceptTeamInvitation [teamName]<br/>
+ * - denyTeamInvitation [teamName]<br/>
+ * - leaveTeam [teamName]<br/>
+ * - kickFromTeam [teamName] [player]<br/>
+ * <br/>
+ * <em><u>Permissions if needed:</u></em><br/>
+ * teamchest.debug - Admin commands<br/>
+ * teamchest.command - Team creation and chest usage<br/>
+ * @author Rouven Tjalf Rosploch (KarasuRou)
  * @version 1.0.0
  */
 public class TeamChest extends JavaPlugin {
@@ -90,21 +108,21 @@ public class TeamChest extends JavaPlugin {
                             String[] teams = teamPlayerMap.keySet().toArray(new String[0]);
                             for (String team : teams) {
                                 String[] player = teamPlayerMap.get(team);
-                                String output = Config.getLanguage("team_1")
+                                StringBuilder output = new StringBuilder(Config.getLanguage("team_1")
                                         .replace("[TEAM]", team)
-                                        .replace("[OWNER]", player[0]);
+                                        .replace("[OWNER]", player[0]));
                                 if (player.length == 1) {
-                                    output += Config.getLanguage("team_2_nomembers");
+                                    output.append(Config.getLanguage("team_2_nomembers"));
                                 } else {
-                                    output += Config.getLanguage("team_2_members");
+                                    output.append(Config.getLanguage("team_2_members"));
                                     for (int i = 1; i < player.length; i++) {
-                                        output += player[i];
+                                        output.append(player[i]);
                                         if (i != player.length - 1) {
-                                            output += ", ";
+                                            output.append(", ");
                                         }
                                     }
                                 }
-                                sender.sendMessage(output);
+                                sender.sendMessage(output.toString());
                             }
                             break;
                         default:
