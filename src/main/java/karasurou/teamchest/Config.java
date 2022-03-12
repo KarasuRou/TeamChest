@@ -1,7 +1,6 @@
 package karasurou.teamchest;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -18,9 +17,6 @@ public class Config {
     private final static String configurationFile = "config.yml";
     private static YamlConfiguration language;
     private static List<String> teamSignLine = new ArrayList<>();
-    private final static List<Material> singItems = new ArrayList<>();
-    private final static List<Material> chestItems = new ArrayList<>();
-    private static String defaultSignLine = "[Team-Sign]";
 
     private Config() {}
     
@@ -35,24 +31,6 @@ public class Config {
         language = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), languageFile));
 
         teamSignLine = configuration.getStringList("team-sign-line");
-        defaultSignLine = teamSignLine.get(0);
-
-        List<String> unprocessedSignItems = configuration.getStringList("sing-items");
-        for (String unprocessedSignItem : unprocessedSignItems) {
-            try {
-                singItems.add(Material.getMaterial(unprocessedSignItem));
-            } catch (Exception e) {
-                outputError(e);
-            }
-        }
-        List<String> unprocessedChestItems = configuration.getStringList("team-items");
-        for (String unprocessedChestItem : unprocessedChestItems) {
-            try {
-                chestItems.add(Material.getMaterial(unprocessedChestItem));
-            } catch (Exception e) {
-                outputError(e);
-            }
-        }
     }
 
     private static void initDefaultConfiguration() {
@@ -90,16 +68,6 @@ public class Config {
 
     public static boolean isSignLine(String line) {
         return teamSignLine.contains(line);
-    }
-    public static boolean isSign(Material material) {
-        return singItems.contains(material);
-    }
-    public static boolean isChest(Material material) {
-        return chestItems.contains(material);
-    }
-
-    public static String getDefaultSignLine() {
-        return defaultSignLine;
     }
 
     private static void outputError(Exception exception) {
