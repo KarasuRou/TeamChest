@@ -73,9 +73,33 @@ public class TeamChest extends JavaPlugin {
                     }
                 }
                 return list;
-            } else {
-                return new ArrayList<>();// TODO: 04.03.2022 Load Team-list for player (recommendation)?
+            } else if (args.length == 2) {
+                switch (args[0]) {
+                    case "createTeam":
+                    case "openChest":
+                    case "deleteTeam":
+                    case "inviteToTeam":
+                    case "getTeamInvitations":
+                    case "cancelTeamInvitation":
+                    case "acceptTeamInvitation":
+                    case "denyTeamInvitation":
+                    case "leaveTeam":
+                    case "kickFromTeam":
+                        return TeamChestAPI.getTeamsFromPlayer((Player) sender);
+                }
+            } else if (args.length == 3) {
+                switch (args[0]) {
+                    case "inviteToTeam":
+                    case "cancelTeamInvitation":
+                    case "kickFromTeam":
+                        List<String> memberList = new ArrayList<>();
+                        for (Player player : getServer().getOnlinePlayers()) {
+                            plugin.getLogger().info(player.getName());
+                        }
+                        return memberList;
+                }
             }
+            return new ArrayList<>();
         }
         return senderCommands;
     }

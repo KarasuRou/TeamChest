@@ -131,6 +131,11 @@ public class TeamChestAPI {
         return false;
     }
 
+    public static List<String> getTeamsFromPlayer(Player player) {
+        String[] teams = searchForTeamsFromMember(player.getName());
+        return Arrays.asList(teams);
+    }
+
     public static boolean getPlayerTeams(Player sender) {
         try {
             String[] teams = searchForTeamsFromMember(sender.getName());
