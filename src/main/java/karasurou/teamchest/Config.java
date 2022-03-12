@@ -57,19 +57,17 @@ public class Config {
 
     private static void initDefaultConfiguration() {
         plugin.saveDefaultConfig();
-        configuration = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "config.yml"));
+        configuration = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), configurationFile));
         configuration.addDefault("language-file", "language.yml");
         configuration.addDefault("language-file-de", "language_de.yml");
         configuration.addDefault("team-sign-line", new String[]{"[Team-Sign]", "[team-sign]", "[Team Sign]", "[team sign]", "[Team_Sign]", "[team_sign]"});
         configuration.addDefault("sing-items", new String[]{"SPRUCE_WALL_SIGN", "DARK_OAK_WALL_SIGN", "ACACIA_WALL_SIGN", "BIRCH_WALL_SIGN", "OAK_WALL_SIGN", "JUNGLE_WALL_SIGN", "WARPED_WALL_SIGN", "CRIMSON_WALL_SIGN"});
         configuration.addDefault("team-items", new String[]{"CHEST", "TRAPPED_CHEST"});
-        configuration.options().copyDefaults(true);
         try {
-            configuration.save(new File(plugin.getDataFolder(), "config.yml"));
+            configuration.save(new File(plugin.getDataFolder(), configurationFile));
         } catch (IOException e) {
             outputError(e);
         }
-//        plugin.saveConfig(); // should i?
     }
 
     private static void initLanguageFiles() {
